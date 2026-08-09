@@ -184,6 +184,15 @@
   }
   .map-legend span{display:inline-flex;align-items:center;gap:7px;}
   .map-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .map-days{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
+  .map-days button{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.04em;
+    color:var(--cream-dim); background:transparent; border:1px solid var(--line);
+    border-radius:var(--radius); padding:8px 14px; cursor:pointer; white-space:nowrap;
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .map-days button:hover{ border-color:var(--gold-dim); color:var(--cream); }
+  .map-days button.active{ background:var(--gold); color:var(--ink); border-color:var(--gold); }
   #leaflet-map{ width:100%; height:640px; border-radius:var(--radius); border:1px solid var(--line); }
   .leaflet-popup-content-wrapper{ background:var(--hull); color:var(--cream); border-radius:var(--radius); }
   .leaflet-popup-tip{background:var(--hull);}
@@ -479,6 +488,7 @@
     <span><span class="dot" style="background:#A5623F"></span>Belfast (Day 4)</span>
     <span><span class="dot" style="background:#7FA0A5"></span>Causeway (Day 5)</span>
   </div>
+  <div class="map-days" id="map-day-tabs" role="tablist" aria-label="Day"></div>
   <div id="leaflet-map"></div>
 </div>
 
@@ -517,26 +527,94 @@
   btnItin.addEventListener('click', showItinerary);
   btnMap.addEventListener('click', showMap);
 
-  var stops = [
-    {name:"Dublin Airport", day:"Day 1 & 6", lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Arrival & departure.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300"},
-    {name:"The Morrison Dublin", day:"Home base", lat:53.3466514, lng:-6.2659595, color:"#C9A24B", note:"Hotel, Days 1–3 and 6.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300"},
-    {name:"Fish Shop, Stoneybatter", day:"Day 1", lat:53.3472611, lng:-6.2819629, color:"#C9A24B", note:"Dinner, no reservations.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjB78qiyjHfl3YfoMS_ajkXRE6oQavWYj6N4WJRLp69s_qATSSScDKZpkefCItfMCme5PXoSHX7SyJnIgwPQ9Dxsdn6tKRJPY7ELwAOc9U5DycQVnNtljzahRxdlCpSA9DFh0tFahuIQkUG2bQ=s300"},
-    {name:"O'Donoghue's Bar", day:"Day 1", lat:53.3382083, lng:-6.2542292, color:"#C9A24B", note:"Where The Dubliners got their start.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDjhxwUEO-IED_PqpJEwT0J7T5j1E--wBXOlrCwVw137jk8QfcF5EA-iPipoM50y4GZowtIHJpvU6_Vea2ljWlcc9jn0IpiDXSQAH5TnWZJ6JrWdxfKXcr5NpXGQISTmTEny5llNMoAhShDR9GP3rakKA=s300"},
-    {name:"Phoenix Park", day:"Day 2", lat:53.3558823, lng:-6.3298133, color:"#C9A24B", note:"Wild deer herd, Wellington Monument.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDz1MpzweaHuK422Umyp1qM4bNM2m0-Zb50rmVI75R0-CSBDjvA4QT2cx2ZMtLlE1t5WmKALE-gJTEvlntHrlbA1PfjjEewVNvvwuD7rkUcBcCJvRgDHDNrK22EkBANqWTufXX4IUoMeP43KQ=s300"},
-    {name:"Guinness Storehouse", day:"Day 2", lat:53.3418088, lng:-6.2867156, color:"#C9A24B", note:"Booked, 11 AM.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCKnC_izut-45pkWG_qp7YC94zsrw0a4vNaFoqlk6fuhpDpLeYBR0srRtk56IeBFqJKiWASmdSx_M2DVCVZXrf6dr_TZD6BCypr0TuX3Koy9JHLbOrq2B0EpVP7N0wteOxH6uA_ADPDvoafTH0=s300"},
-    {name:"Marsh's Library", day:"Day 2", lat:53.3390768, lng:-6.2705909, color:"#C9A24B", note:"Ireland's oldest public library, 1707.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjAe2R4k99BhccNQWpp0ItZFX1nN_COq1B1L3VMHyUG0CzHfI3iiONS-4xnOtv6sw8GW4rEAYfVDEcymbQEfMSvAwjMZcCxp6d3RrptVgnXNhWmqcizE6a6EvNoZAIuJQlq7Si30tRNgc0bN=s300"},
-    {name:"Kilmainham Gaol", day:"Day 2", lat:53.3418701, lng:-6.3098048, color:"#C9A24B", note:"Book ahead — sells out.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjAbndGSZos218J4hvpgMVx73cmeE3wWS8TTdPuES7u71q1qTuEObEUVW4xteueXSLn4cP_PL2Qyp4oZMSXdgSGsOqCf0kOnogAHLfAFgRIVyqD3_48Si6-UMwjFIbHVabb-Qiu6K7G6rKY6IHplwo6G=s300"},
-    {name:"Iveagh Gardens", day:"Day 2", lat:53.3351376, lng:-6.2610343, color:"#C9A24B", note:"Dublin's secret walled garden.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDv4XmCZRy0oBY99o162NLvxG-clzsKw-CuCiD_SsUBVJYDGPnUxr-NynzHNhUm-_xlDGQtubzECsI9BdhgObfi4jE6nr5W0X3BxlcFbuiwjaLBx_fa-QjOPbfrE-YIuwPgORwK881ijQ5P-hyQsWJdpQ=s300"},
-    {name:"Grand Canal Dock", day:"Day 3", lat:53.34418, lng:-6.2408446, color:"#C9A24B", note:"Quiet, modern, almost no tourists.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBNny54KjwScqgKrs3BUV4OyQlWPdhNhOfnVN7GRn2tI1b-UuGjGjrOlg_4Tzgak7Gl5TpVMeDCrtPGLiEkxg_B0xjLd0HQ3hSkaimCw-WdU3cDFU1nTe5mLEJw8cUjj8hlq9ZE10R5abcq9A=s300"},
-    {name:"EPIC Emigration Museum", day:"Day 3", lat:53.3483124, lng:-6.2481792, color:"#C9A24B", note:"Interactive, rarely crowded.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDesKlcs8B48WhRHeNcWq4OwE1DfNz34r-yXPHw5mYPHAnlqXycQdNqUMBtaFUplMBSZh9Gwiyae-gmes1cqcoPJX48RFv1BcAJFfnmYg3FUlhvs2RyHJaJZQpPnI6XfjI4DcMX4CW5C8RxxI0=s300"},
-    {name:"Jameson Distillery Bow St", day:"Day 3", lat:53.3481851, lng:-6.2770289, color:"#C9A24B", note:"Whiskey tasting at the original site.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBZgcXYah0cl38sEw57YCQrCQFpEgd5a28bko7RK_5_Dg5GGAkuJZaMTfvXJjUqMjcG82eJtQukAohUvDvkV_RjJHadcmkHRLsA077D-1_LPb9g53lTXo99p3LRCp2tItrC4LggjLMACVLDo8C-GobEgA=s300"},
-    {name:"Titanic Belfast", day:"Day 4", lat:54.6081106, lng:-5.9099511, color:"#A5623F", note:"Built on the actual shipyard slipways.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjB_y-eC4Kop57XdZuWoT7JtOU1KXzQniDZxAr-CisShJ8uPJ9qaGgLDi0zM9nlUOQurxkQUP7DmL-uH3IemBNfS_Jf_njXqDD8GYa4unpLIeRrxHU9_YUom3uH2qlCHyQ6uWJiLQpZKTulk=s300"},
-    {name:"Cathedral Quarter", day:"Day 4", lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Dinner + live music, overnight in Belfast.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDSUZBnR3KNezQplH0f4OP7z9ubXpN1P8EIyIMZAVGGBdrDdXaSjKEMBtJYvKqtSeUh6o00mqQs1622CUYECIO7dpE5y4YyOtVCIKMuRa5ZBPSxi0p_M8D0JkdKA_Op9OUmB9NPI0rbc1fFbE8=s300"},
-    {name:"Giant's Causeway", day:"Day 5", lat:55.2408073, lng:-6.5115554, color:"#7FA0A5", note:"Arrive early to beat the tour buses.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjA9K5O6spY8lE1caVxQ2F-SWSsDJw4h7Ct84D_BkibdHY32MT4zIz-dS_OaPezvyxdbObl6-XkS6_U3V1VdBZ9Dn2cwU5gwr0ureb7ktalbW9PwFYSqoqzDyHYVjB1ggvxYlORkQVYCoge0tkE=s300"}
+  var dayMeta = [
+    {day:1, label:"Day 1 · Arrival"},
+    {day:2, label:"Day 2 · Guinness"},
+    {day:3, label:"Day 3 · Dublin"},
+    {day:4, label:"Day 4 · Titanic Belfast"},
+    {day:5, label:"Day 5 · Causeway"},
+    {day:6, label:"Day 6 · Home"}
   ];
 
+  // "day" is normalized to the integer day number each stop is actually visited on,
+  // in visit order — stops revisited on a later day (airport, hotel) get their own entry.
+  var stops = [
+    {name:"Dublin Airport", day:1, lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Arrival, off the London leg.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300"},
+    {name:"The Morrison Dublin", day:1, lat:53.3466514, lng:-6.2659595, color:"#C9A24B", note:"Check in, then a walk over the Ha'penny Bridge.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300"},
+    {name:"Fish Shop, Stoneybatter", day:1, lat:53.3472611, lng:-6.2819629, color:"#C9A24B", note:"Dinner, no reservations.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjB78qiyjHfl3YfoMS_ajkXRE6oQavWYj6N4WJRLp69s_qATSSScDKZpkefCItfMCme5PXoSHX7SyJnIgwPQ9Dxsdn6tKRJPY7ELwAOc9U5DycQVnNtljzahRxdlCpSA9DFh0tFahuIQkUG2bQ=s300"},
+    {name:"O'Donoghue's Bar", day:1, lat:53.3382083, lng:-6.2542292, color:"#C9A24B", note:"Where The Dubliners got their start.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDjhxwUEO-IED_PqpJEwT0J7T5j1E--wBXOlrCwVw137jk8QfcF5EA-iPipoM50y4GZowtIHJpvU6_Vea2ljWlcc9jn0IpiDXSQAH5TnWZJ6JrWdxfKXcr5NpXGQISTmTEny5llNMoAhShDR9GP3rakKA=s300"},
+    {name:"Phoenix Park", day:2, lat:53.3558823, lng:-6.3298133, color:"#C9A24B", note:"Wild deer herd, Wellington Monument.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDz1MpzweaHuK422Umyp1qM4bNM2m0-Zb50rmVI75R0-CSBDjvA4QT2cx2ZMtLlE1t5WmKALE-gJTEvlntHrlbA1PfjjEewVNvvwuD7rkUcBcCJvRgDHDNrK22EkBANqWTufXX4IUoMeP43KQ=s300"},
+    {name:"Guinness Storehouse", day:2, lat:53.3418088, lng:-6.2867156, color:"#C9A24B", note:"Booked, 11 AM.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCKnC_izut-45pkWG_qp7YC94zsrw0a4vNaFoqlk6fuhpDpLeYBR0srRtk56IeBFqJKiWASmdSx_M2DVCVZXrf6dr_TZD6BCypr0TuX3Koy9JHLbOrq2B0EpVP7N0wteOxH6uA_ADPDvoafTH0=s300"},
+    {name:"Marsh's Library", day:2, lat:53.3390768, lng:-6.2705909, color:"#C9A24B", note:"Ireland's oldest public library, 1707.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjAe2R4k99BhccNQWpp0ItZFX1nN_COq1B1L3VMHyUG0CzHfI3iiONS-4xnOtv6sw8GW4rEAYfVDEcymbQEfMSvAwjMZcCxp6d3RrptVgnXNhWmqcizE6a6EvNoZAIuJQlq7Si30tRNgc0bN=s300"},
+    {name:"Kilmainham Gaol", day:2, lat:53.3418701, lng:-6.3098048, color:"#C9A24B", note:"Book ahead — sells out.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjAbndGSZos218J4hvpgMVx73cmeE3wWS8TTdPuES7u71q1qTuEObEUVW4xteueXSLn4cP_PL2Qyp4oZMSXdgSGsOqCf0kOnogAHLfAFgRIVyqD3_48Si6-UMwjFIbHVabb-Qiu6K7G6rKY6IHplwo6G=s300"},
+    {name:"Iveagh Gardens", day:2, lat:53.3351376, lng:-6.2610343, color:"#C9A24B", note:"Dublin's secret walled garden.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDv4XmCZRy0oBY99o162NLvxG-clzsKw-CuCiD_SsUBVJYDGPnUxr-NynzHNhUm-_xlDGQtubzECsI9BdhgObfi4jE6nr5W0X3BxlcFbuiwjaLBx_fa-QjOPbfrE-YIuwPgORwK881ijQ5P-hyQsWJdpQ=s300"},
+    {name:"Grand Canal Dock", day:3, lat:53.34418, lng:-6.2408446, color:"#C9A24B", note:"Quiet, modern, almost no tourists.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBNny54KjwScqgKrs3BUV4OyQlWPdhNhOfnVN7GRn2tI1b-UuGjGjrOlg_4Tzgak7Gl5TpVMeDCrtPGLiEkxg_B0xjLd0HQ3hSkaimCw-WdU3cDFU1nTe5mLEJw8cUjj8hlq9ZE10R5abcq9A=s300"},
+    {name:"EPIC Emigration Museum", day:3, lat:53.3483124, lng:-6.2481792, color:"#C9A24B", note:"Interactive, rarely crowded.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDesKlcs8B48WhRHeNcWq4OwE1DfNz34r-yXPHw5mYPHAnlqXycQdNqUMBtaFUplMBSZh9Gwiyae-gmes1cqcoPJX48RFv1BcAJFfnmYg3FUlhvs2RyHJaJZQpPnI6XfjI4DcMX4CW5C8RxxI0=s300"},
+    {name:"Jameson Distillery Bow St", day:3, lat:53.3481851, lng:-6.2770289, color:"#C9A24B", note:"Whiskey tasting at the original site.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBZgcXYah0cl38sEw57YCQrCQFpEgd5a28bko7RK_5_Dg5GGAkuJZaMTfvXJjUqMjcG82eJtQukAohUvDvkV_RjJHadcmkHRLsA077D-1_LPb9g53lTXo99p3LRCp2tItrC4LggjLMACVLDo8C-GobEgA=s300"},
+    {name:"Titanic Belfast", day:4, lat:54.6081106, lng:-5.9099511, color:"#A5623F", note:"Built on the actual shipyard slipways.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjB_y-eC4Kop57XdZuWoT7JtOU1KXzQniDZxAr-CisShJ8uPJ9qaGgLDi0zM9nlUOQurxkQUP7DmL-uH3IemBNfS_Jf_njXqDD8GYa4unpLIeRrxHU9_YUom3uH2qlCHyQ6uWJiLQpZKTulk=s300"},
+    {name:"Cathedral Quarter", day:4, lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Dinner + live music, overnight in Belfast.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDSUZBnR3KNezQplH0f4OP7z9ubXpN1P8EIyIMZAVGGBdrDdXaSjKEMBtJYvKqtSeUh6o00mqQs1622CUYECIO7dpE5y4YyOtVCIKMuRa5ZBPSxi0p_M8D0JkdKA_Op9OUmB9NPI0rbc1fFbE8=s300"},
+    {name:"Giant's Causeway", day:5, lat:55.2408073, lng:-6.5115554, color:"#7FA0A5", note:"Arrive early to beat the tour buses.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjA9K5O6spY8lE1caVxQ2F-SWSsDJw4h7Ct84D_BkibdHY32MT4zIz-dS_OaPezvyxdbObl6-XkS6_U3V1VdBZ9Dn2cwU5gwr0ureb7ktalbW9PwFYSqoqzDyHYVjB1ggvxYlORkQVYCoge0tkE=s300"},
+    {name:"The Morrison Dublin", day:6, lat:53.3466514, lng:-6.2659595, color:"#C9A24B", note:"Pack up, easy morning before the flight.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300"},
+    {name:"Dublin Airport", day:6, lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Flight home to Newark, 1:15 PM.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300"}
+  ];
+
+  var map, markersLayer, currentDay = 1;
+
+  function buildDayTabs(){
+    var container = document.getElementById('map-day-tabs');
+    dayMeta.forEach(function(d){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = d.label;
+      btn.setAttribute('role','tab');
+      btn.dataset.day = d.day;
+      btn.addEventListener('click', function(){ renderDay(d.day); });
+      container.appendChild(btn);
+    });
+  }
+
+  function renderDay(day){
+    currentDay = day;
+
+    var buttons = document.querySelectorAll('#map-day-tabs button');
+    buttons.forEach(function(b){
+      var active = Number(b.dataset.day) === day;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+
+    markersLayer.clearLayers();
+
+    var dayStops = stops.filter(function(s){ return s.day === day; });
+    var latlngs = [];
+    dayStops.forEach(function(s){
+      var icon = L.divIcon({
+        className: '',
+        html: '<div style="width:14px;height:14px;border-radius:50%;background:'+s.color+';border:2px solid #0E2620;box-shadow:0 0 0 1px rgba(242,236,220,0.3);"></div>',
+        iconSize:[14,14],
+        iconAnchor:[7,7]
+      });
+      var marker = L.marker([s.lat, s.lng], {icon:icon});
+      var popupHtml = '<img class="popup-photo" loading="lazy" src="'+s.photo+'" alt="">' +
+        '<div class="popup-day">Day '+s.day+'</div>' +
+        '<div class="popup-name">'+s.name+'</div>' +
+        '<div class="popup-note">'+s.note+'</div>';
+      marker.bindPopup(popupHtml, {closeButton:true, maxWidth:220});
+      marker.addTo(markersLayer);
+      latlngs.push([s.lat, s.lng]);
+    });
+
+    if(latlngs.length > 1){
+      L.polyline(latlngs, {color:'#C9A24B', weight:3, opacity:0.7, dashArray:'6 8'}).addTo(markersLayer);
+    }
+
+    if(latlngs.length){
+      map.fitBounds(latlngs, {padding:[40,40], maxZoom:14});
+    }
+  }
+
   function initMap(){
-    var map = L.map('leaflet-map', {scrollWheelZoom:false}).setView([54.1, -6.6], 7);
+    map = L.map('leaflet-map', {scrollWheelZoom:false}).setView([54.1, -6.6], 7);
     window.__leafletMap = map;
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -545,23 +623,10 @@
       maxZoom: 19
     }).addTo(map);
 
-    var bounds = [];
-    stops.forEach(function(s){
-      var icon = L.divIcon({
-        className: '',
-        html: '<div style="width:14px;height:14px;border-radius:50%;background:'+s.color+';border:2px solid #0E2620;box-shadow:0 0 0 1px rgba(242,236,220,0.3);"></div>',
-        iconSize:[14,14],
-        iconAnchor:[7,7]
-      });
-      var marker = L.marker([s.lat, s.lng], {icon:icon}).addTo(map);
-      var popupHtml = '<img class="popup-photo" loading="lazy" src="'+s.photo+'" alt="">' +
-        '<div class="popup-day">'+s.day+'</div>' +
-        '<div class="popup-name">'+s.name+'</div>' +
-        '<div class="popup-note">'+s.note+'</div>';
-      marker.bindPopup(popupHtml, {closeButton:true, maxWidth:220});
-      bounds.push([s.lat, s.lng]);
-    });
-    map.fitBounds(bounds, {padding:[30,30]});
+    markersLayer = L.layerGroup().addTo(map);
+
+    buildDayTabs();
+    renderDay(1);
   }
 </script>
 
