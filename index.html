@@ -96,17 +96,15 @@
   .view-toggle button.active{ background:var(--gold); color:var(--ink); }
   .view-toggle button:not(.active):hover{ color:var(--cream); }
 
-  nav.days{ display:flex; gap:6px; overflow-x:auto; padding:18px 0 6px; margin-top:16px; border-top:1px solid var(--line); }
+  nav.days{ display:flex; gap:6px; overflow-x:auto; padding:0 0 6px; margin-bottom:36px; border-bottom:1px solid var(--line); }
   nav.days a{
     font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--cream-dim); white-space:nowrap;
     padding:8px 12px; border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
     transition:border-color .15s, color .15s;
   }
   nav.days a:hover{ border-color:var(--gold-dim); color:var(--cream); text-decoration:none; }
-  nav.days.hidden{ display:none; }
 
   main{padding:8px 0 100px;}
-  #itinerary-view.hidden, #map-view.hidden{display:none;}
 
   section.day{ border-top:1px solid var(--line); padding:46px 0; scroll-margin-top:20px; }
   section.day:first-of-type{border-top:none;}
@@ -178,14 +176,19 @@
   details.logistics[open] summary::before{content:'– ';}
   details.logistics .content{ padding:10px 0 0 14px; font-size:14px; color:var(--cream-dim); line-height:1.6; }
 
-  #map-view{padding:28px 0 80px;}
+  section.map-view{
+    border-bottom:1px solid var(--line);
+    padding-top:28px;
+    background:var(--ink);
+  }
+  .map-view-head{ padding-bottom:16px; }
   .map-legend{
     display:flex; flex-wrap:wrap; gap:18px; margin-bottom:16px;
     font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--cream-dim);
   }
   .map-legend span{display:inline-flex;align-items:center;gap:7px;}
   .map-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
-  .map-days{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
+  .map-days{ display:flex; flex-wrap:wrap; gap:6px; }
   .map-days button{
     font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.04em;
     color:var(--cream-dim); background:transparent; border:1px solid var(--line);
@@ -194,7 +197,10 @@
   }
   .map-days button:hover{ border-color:var(--gold-dim); color:var(--cream); }
   .map-days button.active{ background:var(--gold); color:var(--ink); border-color:var(--gold); }
-  #leaflet-map{ width:100%; height:640px; border-radius:var(--radius); border:1px solid var(--line); }
+  #leaflet-map{
+    width:100%; height:70vh; min-height:440px; max-height:680px;
+    display:block; border-top:1px solid var(--line);
+  }
   .leaflet-popup-content-wrapper{ background:var(--hull); color:var(--cream); border-radius:var(--radius); }
   .leaflet-popup-tip{background:var(--hull);}
   .popup-photo{ width:100%; height:110px; object-fit:cover; border-radius:var(--radius); margin-bottom:8px; }
@@ -213,7 +219,7 @@
     .day-head{flex-wrap:wrap;}
     .stops{padding-left:16px;margin-left:2px;}
     .stop::before{left:-21px;}
-    #leaflet-map{height:480px;}
+    #leaflet-map{height:60vh; min-height:360px;}
   }
 </style>
 </head>
@@ -221,7 +227,7 @@
 
 <header class="hero">
   <div class="wrap">
-    <p class="eyebrow">Erik &amp; guest · Oct 8–17, 2026</p>
+    <p class="eyebrow">Erik &amp; Steph · Oct 8–17, 2026</p>
     <h1 class="title">London, then west<br>to <em>Ireland</em>.</h1>
     <p class="sub">Ten days — an NFL Sunday at Tottenham Hotspur Stadium, three nights in Dublin, one voyage north to the Causeway coast and where the Titanic was built, then home.</p>
 
@@ -245,40 +251,53 @@
       </svg>
     </div>
 
-    <div class="view-toggle" role="tablist" aria-label="View">
-      <button id="btn-itinerary" class="active" role="tab" aria-selected="true">Itinerary</button>
-      <button id="btn-map" role="tab" aria-selected="false">Map</button>
+    <div class="view-toggle" role="group" aria-label="Jump to section">
+      <button id="btn-map" type="button">Map</button>
+      <button id="btn-itinerary" type="button">Itinerary</button>
     </div>
-
-    <nav class="days" id="day-nav">
-      <a href="#day1">Day 1 · Depart</a>
-      <a href="#day2">Day 2 · London</a>
-      <a href="#day3">Day 3 · London</a>
-      <a href="#day4">Day 4 · Eagles/Jaguars</a>
-      <a href="#day5">Day 5 · Arrival, Dublin</a>
-      <a href="#day6">Day 6 · Guinness</a>
-      <a href="#day7">Day 7 · Dublin</a>
-      <a href="#day8">Day 8 · Causeway</a>
-      <a href="#day9">Day 9 · Titanic Belfast</a>
-      <a href="#day10">Day 10 · Home</a>
-    </nav>
   </div>
 </header>
+
+<section class="map-view" id="map-view">
+  <div class="wrap map-view-head">
+    <div class="map-legend">
+      <span><span class="dot" style="background:#6E85A6"></span>London (Days 1–4)</span>
+      <span><span class="dot" style="background:#C9A24B"></span>Dublin (Days 5–7, 10)</span>
+      <span><span class="dot" style="background:#A5623F"></span>Belfast (Days 8–9)</span>
+      <span><span class="dot" style="background:#7FA0A5"></span>Causeway (Day 8)</span>
+    </div>
+    <div class="map-days" id="map-day-tabs" role="tablist" aria-label="Trip leg or day"></div>
+  </div>
+  <div id="leaflet-map"></div>
+</section>
 
 <main class="wrap">
 
 <div id="itinerary-view">
 
+  <nav class="days" id="day-nav">
+    <a href="#day1">Day 1 · Depart</a>
+    <a href="#day2">Day 2 · London</a>
+    <a href="#day3">Day 3 · London</a>
+    <a href="#day4">Day 4 · Eagles/Jaguars</a>
+    <a href="#day5">Day 5 · Arrival, Dublin</a>
+    <a href="#day6">Day 6 · Guinness</a>
+    <a href="#day7">Day 7 · Dublin</a>
+    <a href="#day8">Day 8 · Causeway</a>
+    <a href="#day9">Day 9 · Titanic Belfast</a>
+    <a href="#day10">Day 10 · Home</a>
+  </nav>
+
   <section class="day" id="day1">
     <div class="day-head"><span class="day-num">DAY 1</span><span class="day-date">Thu, Oct 8</span></div>
     <h2 class="day-title">Wheels up for London</h2>
-    <p class="day-loc">Philadelphia → London</p>
+    <p class="day-loc">Philadelphia → Boston → London</p>
     <div class="stops">
       <div class="stop">
         <div class="stop-text">
           <div class="stop-time">8:15 PM</div>
           <div class="stop-name">Depart Philadelphia</div>
-          <div class="stop-note">Overnight flight across the Atlantic — try to get some sleep, it's a long one.</div>
+          <div class="stop-note">AA1874 to Boston, connecting to AA108 overnight to London Heathrow — try to get some sleep, it's a long one.</div>
         </div>
       </div>
     </div>
@@ -291,9 +310,9 @@
     <div class="stops">
       <div class="stop">
         <div class="stop-text">
-          <div class="stop-time">Morning</div>
+          <div class="stop-time">~7:50 AM</div>
           <div class="stop-name">Land in London</div>
-          <div class="stop-note">Off the overnight flight — keep today light.</div>
+          <div class="stop-note">AA108 lands at Heathrow — off the overnight flight, keep today light.</div>
         </div>
       </div>
       <div class="stop">
@@ -395,7 +414,7 @@
   <section class="day" id="day5">
     <div class="day-head"><span class="day-num">DAY 5</span><span class="day-date">Mon, Oct 12</span></div>
     <h2 class="day-title">Arrival, Dublin</h2>
-    <p class="day-loc">London → Dublin Airport → The Morrison Dublin</p>
+    <p class="day-loc">London → Dublin Airport → The Alex Hotel</p>
     <div class="stops">
       <div class="stop">
         <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s400" alt="Dublin Airport">
@@ -406,11 +425,10 @@
         </div>
       </div>
       <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s400" alt="The Morrison Dublin">
         <div class="stop-text">
           <div class="stop-time">Afternoon</div>
           <div class="stop-name">Check in, walk it off</div>
-          <div class="stop-note">The Morrison Dublin, then a loop over the Ha'penny Bridge and along the Liffey.</div>
+          <div class="stop-note">The Alex Hotel, Fenian Street, then a loop over the Ha'penny Bridge and along the Liffey.</div>
         </div>
       </div>
       <div class="stop">
@@ -511,7 +529,6 @@
 
     <div class="stops">
       <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s400" alt="Depart Dublin">
         <div class="stop-text">
           <div class="stop-time">8:00 AM</div>
           <div class="stop-name">Depart Dublin</div>
@@ -570,7 +587,6 @@
         </div>
       </div>
       <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s400" alt="Back to Dublin">
         <div class="stop-text">
           <div class="stop-time">Afternoon</div>
           <div class="stop-name">Straight back to Dublin</div>
@@ -599,36 +615,24 @@
     <p class="day-loc">Dublin → Philadelphia</p>
     <div class="stops">
       <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s400" alt="The Morrison Dublin">
         <div class="stop-text">
-          <div class="stop-time">Morning</div>
+          <div class="stop-time">Early morning</div>
           <div class="stop-name">Easy start</div>
-          <div class="stop-note">Pack up, breakfast near the hotel — transatlantic flight today.</div>
+          <div class="stop-note">Pack up quickly, breakfast near The Alex — early flight today.</div>
         </div>
       </div>
       <div class="stop">
         <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s400" alt="Dublin Airport">
         <div class="stop-text">
-          <div class="stop-time">1:15 PM</div>
+          <div class="stop-time">9:30 AM</div>
           <div class="stop-name">Flight home</div>
-          <div class="stop-note">Dublin → Philadelphia, direct — check your booking for the exact arrival time.</div>
+          <div class="stop-note">Dublin → Philadelphia, direct, AA723 — arrives ~11:50 AM.</div>
         </div>
       </div>
     </div>
   </section>
 
 </div><!-- /#itinerary-view -->
-
-<div id="map-view" class="hidden">
-  <div class="map-legend">
-    <span><span class="dot" style="background:#6E85A6"></span>London (Days 1–4)</span>
-    <span><span class="dot" style="background:#C9A24B"></span>Dublin (Days 5–7, 10)</span>
-    <span><span class="dot" style="background:#A5623F"></span>Belfast (Days 8–9)</span>
-    <span><span class="dot" style="background:#7FA0A5"></span>Causeway (Day 8)</span>
-  </div>
-  <div class="map-days" id="map-day-tabs" role="tablist" aria-label="Day"></div>
-  <div id="leaflet-map"></div>
-</div>
 
 </main>
 
@@ -641,29 +645,29 @@
 <script>
   var btnItin = document.getElementById('btn-itinerary');
   var btnMap = document.getElementById('btn-map');
-  var itinView = document.getElementById('itinerary-view');
-  var mapView = document.getElementById('map-view');
-  var dayNav = document.getElementById('day-nav');
-  var mapInitialized = false;
+  var mapSection = document.getElementById('map-view');
 
-  function showItinerary(){
-    itinView.classList.remove('hidden');
-    mapView.classList.add('hidden');
-    dayNav.classList.remove('hidden');
-    btnItin.classList.add('active'); btnItin.setAttribute('aria-selected','true');
-    btnMap.classList.remove('active'); btnMap.setAttribute('aria-selected','false');
+  // Trip runs Thu Oct 8 (day 1) through Sat Oct 17, 2026 (day 10).
+  var TRIP_START = new Date(2026, 9, 8);
+  var TRIP_END = new Date(2026, 9, 17);
+
+  function currentTripDay(){
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if(today < TRIP_START || today > TRIP_END) return 1;
+    var diffDays = Math.round((today - TRIP_START) / 86400000);
+    return diffDays + 1;
   }
-  function showMap(){
-    itinView.classList.add('hidden');
-    mapView.classList.remove('hidden');
-    dayNav.classList.add('hidden');
-    btnMap.classList.add('active'); btnMap.setAttribute('aria-selected','true');
-    btnItin.classList.remove('active'); btnItin.setAttribute('aria-selected','false');
-    if(!mapInitialized){ initMap(); mapInitialized = true; }
-    setTimeout(function(){ if(window.__leafletMap) window.__leafletMap.invalidateSize(); }, 50);
+
+  function scrollToItinerary(){
+    var target = document.getElementById('day' + currentTripDay());
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
   }
-  btnItin.addEventListener('click', showItinerary);
-  btnMap.addEventListener('click', showMap);
+  function scrollToMap(){
+    mapSection.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  btnItin.addEventListener('click', scrollToItinerary);
+  btnMap.addEventListener('click', scrollToMap);
 
   var dayMeta = [
     {day:1, label:"Day 1 · Depart"},
@@ -683,8 +687,8 @@
   // London stops (days 1-4) have no "photo" — no hotel booked yet and no verified photo URLs,
   // so those markers/cards render without a thumbnail rather than a fabricated image link.
   var stops = [
-    {name:"Philadelphia Airport", day:1, lat:39.8719, lng:-75.2411, color:"#6E85A6", note:"Depart PHL, 8:15 PM — overnight flight to London."},
-    {name:"Heathrow Airport", day:2, lat:51.4700, lng:-0.4543, color:"#6E85A6", note:"Land in London, off the overnight flight."},
+    {name:"Philadelphia Airport", day:1, lat:39.8719, lng:-75.2411, color:"#6E85A6", note:"Depart PHL, 8:15 PM, AA1874 to Boston, connecting to AA108 overnight to London."},
+    {name:"Heathrow Airport", day:2, lat:51.4700, lng:-0.4543, color:"#6E85A6", note:"AA108 lands ~7:50 AM, off the overnight flight."},
     {name:"London hotel (TBD)", day:2, lat:51.5117, lng:-0.1246, color:"#6E85A6", note:"Check in — swap in the real hotel once it's booked."},
     {name:"Borough Market", day:2, lat:51.5055, lng:-0.0910, color:"#6E85A6", note:"Historic food market by London Bridge, no reservations needed."},
     {name:"Tower Bridge", day:2, lat:51.5055, lng:-0.0754, color:"#6E85A6", note:"Evening walk along the Thames past Tower Bridge and City Hall."},
@@ -695,7 +699,7 @@
     {name:"London hotel (TBD)", day:4, lat:51.5117, lng:-0.1246, color:"#6E85A6", note:"Slow start, then the Underground north to Tottenham."},
     {name:"Tottenham Hotspur Stadium", day:4, lat:51.6043, lng:-0.0665, color:"#6E85A6", note:"Eagles vs. Jaguars, NFL London Games — kickoff 2:30 PM local (9:30 AM ET)."},
     {name:"Dublin Airport", day:5, lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Short hop over from London.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300"},
-    {name:"The Morrison Dublin", day:5, lat:53.3466514, lng:-6.2659595, color:"#C9A24B", note:"Check in, then a walk over the Ha'penny Bridge.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300"},
+    {name:"The Alex Hotel", day:5, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Check in, then a walk over the Ha'penny Bridge."},
     {name:"Fish Shop, Stoneybatter", day:5, lat:53.3472611, lng:-6.2819629, color:"#C9A24B", note:"Dinner, no reservations.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjB78qiyjHfl3YfoMS_ajkXRE6oQavWYj6N4WJRLp69s_qATSSScDKZpkefCItfMCme5PXoSHX7SyJnIgwPQ9Dxsdn6tKRJPY7ELwAOc9U5DycQVnNtljzahRxdlCpSA9DFh0tFahuIQkUG2bQ=s300"},
     {name:"O'Donoghue's Bar", day:5, lat:53.3382083, lng:-6.2542292, color:"#C9A24B", note:"Where The Dubliners got their start.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDjhxwUEO-IED_PqpJEwT0J7T5j1E--wBXOlrCwVw137jk8QfcF5EA-iPipoM50y4GZowtIHJpvU6_Vea2ljWlcc9jn0IpiDXSQAH5TnWZJ6JrWdxfKXcr5NpXGQISTmTEny5llNMoAhShDR9GP3rakKA=s300"},
     {name:"Phoenix Park", day:6, lat:53.3558823, lng:-6.3298133, color:"#C9A24B", note:"Wild deer herd, Wellington Monument.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDz1MpzweaHuK422Umyp1qM4bNM2m0-Zb50rmVI75R0-CSBDjvA4QT2cx2ZMtLlE1t5WmKALE-gJTEvlntHrlbA1PfjjEewVNvvwuD7rkUcBcCJvRgDHDNrK22EkBANqWTufXX4IUoMeP43KQ=s300"},
@@ -706,18 +710,39 @@
     {name:"Grand Canal Dock", day:7, lat:53.34418, lng:-6.2408446, color:"#C9A24B", note:"Quiet, modern, almost no tourists.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBNny54KjwScqgKrs3BUV4OyQlWPdhNhOfnVN7GRn2tI1b-UuGjGjrOlg_4Tzgak7Gl5TpVMeDCrtPGLiEkxg_B0xjLd0HQ3hSkaimCw-WdU3cDFU1nTe5mLEJw8cUjj8hlq9ZE10R5abcq9A=s300"},
     {name:"EPIC Emigration Museum", day:7, lat:53.3483124, lng:-6.2481792, color:"#C9A24B", note:"Interactive, rarely crowded.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDesKlcs8B48WhRHeNcWq4OwE1DfNz34r-yXPHw5mYPHAnlqXycQdNqUMBtaFUplMBSZh9Gwiyae-gmes1cqcoPJX48RFv1BcAJFfnmYg3FUlhvs2RyHJaJZQpPnI6XfjI4DcMX4CW5C8RxxI0=s300"},
     {name:"Jameson Distillery Bow St", day:7, lat:53.3481851, lng:-6.2770289, color:"#C9A24B", note:"Whiskey tasting at the original site.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBZgcXYah0cl38sEw57YCQrCQFpEgd5a28bko7RK_5_Dg5GGAkuJZaMTfvXJjUqMjcG82eJtQukAohUvDvkV_RjJHadcmkHRLsA077D-1_LPb9g53lTXo99p3LRCp2tItrC4LggjLMACVLDo8C-GobEgA=s300"},
-    {name:"The Morrison Dublin", day:8, lat:53.3466514, lng:-6.2659595, color:"#C9A24B", note:"Depart Dublin for Belfast, ~2 hrs via the M1.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300"},
+    {name:"The Alex Hotel", day:8, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Depart Dublin for Belfast, ~2 hrs via the M1."},
     {name:"Cathedral Quarter", day:8, lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Check into the hotel before continuing north.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDSUZBnR3KNezQplH0f4OP7z9ubXpN1P8EIyIMZAVGGBdrDdXaSjKEMBtJYvKqtSeUh6o00mqQs1622CUYECIO7dpE5y4YyOtVCIKMuRa5ZBPSxi0p_M8D0JkdKA_Op9OUmB9NPI0rbc1fFbE8=s300"},
     {name:"Giant's Causeway", day:8, lat:55.2408073, lng:-6.5115554, color:"#7FA0A5", note:"A day trip north from Belfast — arrive early to beat the tour buses.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjA9K5O6spY8lE1caVxQ2F-SWSsDJw4h7Ct84D_BkibdHY32MT4zIz-dS_OaPezvyxdbObl6-XkS6_U3V1VdBZ9Dn2cwU5gwr0ureb7ktalbW9PwFYSqoqzDyHYVjB1ggvxYlORkQVYCoge0tkE=s300"},
     {name:"Cathedral Quarter", day:8, lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Back to Belfast for dinner + live music. Overnight in the Cathedral Quarter.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDSUZBnR3KNezQplH0f4OP7z9ubXpN1P8EIyIMZAVGGBdrDdXaSjKEMBtJYvKqtSeUh6o00mqQs1622CUYECIO7dpE5y4YyOtVCIKMuRa5ZBPSxi0p_M8D0JkdKA_Op9OUmB9NPI0rbc1fFbE8=s300"},
     {name:"Cathedral Quarter", day:9, lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Depart Belfast for the shipyard.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDSUZBnR3KNezQplH0f4OP7z9ubXpN1P8EIyIMZAVGGBdrDdXaSjKEMBtJYvKqtSeUh6o00mqQs1622CUYECIO7dpE5y4YyOtVCIKMuRa5ZBPSxi0p_M8D0JkdKA_Op9OUmB9NPI0rbc1fFbE8=s300"},
     {name:"Titanic Belfast", day:9, lat:54.6081106, lng:-5.9099511, color:"#A5623F", note:"Built on the actual shipyard slipways where the ship was laid down and launched. Budget 2.5–3 hours.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjB_y-eC4Kop57XdZuWoT7JtOU1KXzQniDZxAr-CisShJ8uPJ9qaGgLDi0zM9nlUOQurxkQUP7DmL-uH3IemBNfS_Jf_njXqDD8GYa4unpLIeRrxHU9_YUom3uH2qlCHyQ6uWJiLQpZKTulk=s300"},
-    {name:"The Morrison Dublin", day:9, lat:53.3466514, lng:-6.2659595, color:"#C9A24B", note:"Straight back to Dublin, ~2 hrs via the M1.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300"},
-    {name:"The Morrison Dublin", day:10, lat:53.3466514, lng:-6.2659595, color:"#C9A24B", note:"Pack up, easy morning before the flight.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300"},
-    {name:"Dublin Airport", day:10, lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Flight home to Philadelphia, 1:15 PM.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300"}
+    {name:"The Alex Hotel", day:9, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Straight back to Dublin, ~2 hrs via the M1."},
+    {name:"The Alex Hotel", day:10, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Pack up quickly — early flight today."},
+    {name:"Dublin Airport", day:10, lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Flight home to Philadelphia, AA723, 9:30 AM — arrives ~11:50 AM.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300"}
   ];
 
-  var map, markersLayer, routeLayer, currentDay = 1, routeRequestId = 0;
+  // The major inter-city legs of the trip — flights (dashed) and drives (solid) —
+  // used by the "Overview" map state and for their click-for-duration popups.
+  var legs = [
+    {from:"Philadelphia", to:"Boston", mode:"flight", flight:"AA1874", duration:"~1h 30m", color:"#6E85A6", coords:[[39.8719,-75.2411],[42.3656,-71.0096]]},
+    {from:"Boston", to:"London", mode:"flight", flight:"AA108", duration:"~6h 45m", color:"#6E85A6", coords:[[42.3656,-71.0096],[51.4700,-0.4543]]},
+    {from:"London", to:"Dublin", mode:"flight", flight:null, duration:"~1h 20m", color:"#6E85A6", coords:[[51.4700,-0.4543],[53.425632,-6.257375]]},
+    {from:"Dublin", to:"Belfast", mode:"drive", flight:null, duration:"~2h", color:"#A5623F", coords:[[53.425632,-6.257375],[54.6022751,-5.9290968]]},
+    {from:"Belfast", to:"Giant's Causeway (round trip)", mode:"drive", flight:null, duration:"~2–2.5h round trip", color:"#7FA0A5", coords:[[54.6022751,-5.9290968],[55.2408073,-6.5115554],[54.6022751,-5.9290968]]},
+    {from:"Belfast", to:"Dublin", mode:"drive", flight:null, duration:"~2h", color:"#C9A24B", coords:[[54.6022751,-5.9290968],[53.425632,-6.257375]]},
+    {from:"Dublin", to:"Philadelphia", mode:"flight", flight:"AA723", duration:"~7h 20m", color:"#6E85A6", coords:[[53.425632,-6.257375],[39.8719,-75.2411]]}
+  ];
+
+  var hubs = [
+    {name:"Philadelphia", lat:39.8719, lng:-75.2411, color:"#6E85A6"},
+    {name:"Boston", lat:42.3656, lng:-71.0096, color:"#6E85A6"},
+    {name:"London", lat:51.4700, lng:-0.4543, color:"#6E85A6"},
+    {name:"Dublin", lat:53.425632, lng:-6.257375, color:"#C9A24B"},
+    {name:"Belfast", lat:54.6022751, lng:-5.9290968, color:"#A5623F"},
+    {name:"Giant's Causeway", lat:55.2408073, lng:-6.5115554, color:"#7FA0A5"}
+  ];
+
+  var map, markersLayer, routeLayer, routeRequestId = 0;
 
   function cssVar(name){
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -752,7 +777,7 @@
       if(!res.ok) throw new Error('OSRM request failed: ' + res.status);
       return res.json();
     }).then(function(data){
-      if(thisRequest !== routeRequestId) return; // a newer day was selected meanwhile
+      if(thisRequest !== routeRequestId) return; // a newer view was selected meanwhile
       if(!data.routes || !data.routes.length) throw new Error('OSRM returned no route');
       clearRoute();
       routeLayer = L.geoJSON(data.routes[0].geometry, {
@@ -768,26 +793,86 @@
 
   function buildDayTabs(){
     var container = document.getElementById('map-day-tabs');
+
+    var overviewBtn = document.createElement('button');
+    overviewBtn.type = 'button';
+    overviewBtn.textContent = 'Overview';
+    overviewBtn.setAttribute('role','tab');
+    overviewBtn.dataset.key = 'overview';
+    overviewBtn.addEventListener('click', renderOverview);
+    container.appendChild(overviewBtn);
+
     dayMeta.forEach(function(d){
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.textContent = d.label;
       btn.setAttribute('role','tab');
-      btn.dataset.day = d.day;
+      btn.dataset.key = String(d.day);
       btn.addEventListener('click', function(){ renderDay(d.day); });
       container.appendChild(btn);
     });
   }
 
-  function renderDay(day){
-    currentDay = day;
-
+  function setActiveTab(key){
     var buttons = document.querySelectorAll('#map-day-tabs button');
     buttons.forEach(function(b){
-      var active = Number(b.dataset.day) === day;
+      var active = b.dataset.key === String(key);
       b.classList.toggle('active', active);
       b.setAttribute('aria-selected', active ? 'true' : 'false');
     });
+  }
+
+  // Every view switch bumps this so an in-flight OSRM fetch from the previous
+  // view can't resolve later and clobber whatever's now on the map.
+  function invalidatePendingRoute(){
+    routeRequestId++;
+  }
+
+  function renderOverview(){
+    setActiveTab('overview');
+    invalidatePendingRoute();
+
+    markersLayer.clearLayers();
+    clearRoute();
+
+    var allPoints = [];
+    var lines = legs.map(function(leg){
+      var line = L.polyline(leg.coords, {
+        color: leg.color,
+        weight: leg.mode === 'flight' ? 2.5 : 3,
+        opacity: 0.8,
+        dashArray: leg.mode === 'flight' ? '2 8' : null
+      });
+      var detail = leg.flight ? (leg.flight + ' · ' + leg.duration) : leg.duration;
+      line.bindPopup(
+        '<div class="popup-name">' + leg.from + ' → ' + leg.to + '</div>' +
+        '<div class="popup-note">' + detail + '</div>',
+        {closeButton:true, maxWidth:220}
+      );
+      leg.coords.forEach(function(c){ allPoints.push(c); });
+      return line;
+    });
+    routeLayer = L.layerGroup(lines).addTo(map);
+
+    hubs.forEach(function(h){
+      var icon = L.divIcon({
+        className: '',
+        html: '<div style="width:14px;height:14px;border-radius:50%;background:'+h.color+';border:2px solid #0E2620;box-shadow:0 0 0 1px rgba(242,236,220,0.3);"></div>',
+        iconSize:[14,14],
+        iconAnchor:[7,7]
+      });
+      var marker = L.marker([h.lat, h.lng], {icon:icon});
+      marker.bindPopup('<div class="popup-name">'+h.name+'</div>', {closeButton:true, maxWidth:200});
+      marker.addTo(markersLayer);
+      allPoints.push([h.lat, h.lng]);
+    });
+
+    map.fitBounds(allPoints, {padding:[30,30]});
+  }
+
+  function renderDay(day){
+    setActiveTab(day);
+    invalidatePendingRoute();
 
     markersLayer.clearLayers();
     clearRoute();
@@ -818,10 +903,10 @@
   }
 
   function initMap(){
-    map = L.map('leaflet-map', {scrollWheelZoom:false}).setView([54.1, -6.6], 7);
+    map = L.map('leaflet-map', {scrollWheelZoom:false}).setView([46, -30], 3);
     window.__leafletMap = map;
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19
@@ -830,8 +915,10 @@
     markersLayer = L.layerGroup().addTo(map);
 
     buildDayTabs();
-    renderDay(1);
+    renderOverview();
   }
+
+  initMap();
 </script>
 
 </body>
