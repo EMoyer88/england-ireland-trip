@@ -165,6 +165,31 @@
   .idea-t{font-family:'Fraunces',serif;font-weight:500;font-size:16px;}
   .idea-t a{color:var(--gold);text-decoration:none;}
   .idea-n{font-size:14px;color:var(--cream-dim);line-height:1.45;margin-top:2px;}
+
+  .tabs{grid-template-columns:repeat(4,1fr);}
+  .tabs button{font-size:11px;letter-spacing:.04em;}
+  .near-head{padding:16px 0 4px;}
+  .chiprow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+  .cbtn{min-height:44px;padding:0 14px;background:transparent;border:1px solid var(--line);border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--cream-dim);}
+  .cbtn.active{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:500;}
+  .locbtn{width:100%;min-height:50px;margin-top:4px;background:var(--hull-2);border:1px solid var(--gold);border-radius:3px;color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;}
+  #near-status{min-height:22px;margin:8px 0 10px;font-size:14px;color:var(--cream-dim);line-height:1.4;}
+  #near-map{width:100%;height:46vh;min-height:320px;border:1px solid var(--line);border-radius:4px;background:var(--hull);}
+  .near-legend{display:flex;gap:18px;margin:10px 0 14px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--cream-dim);align-items:center;}
+  .ldot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .pubdot{background:#C9A24B;} .sightdot{background:#7FA0A5;} .medot{background:#F2ECDC;box-shadow:0 0 0 3px rgba(242,236,220,.3);}
+  .pcard{padding:14px;border:1px solid var(--line);border-radius:4px;background:rgba(242,236,220,.03);margin-bottom:10px;}
+  .pc-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pk{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:2px;border:1px solid var(--line);}
+  .pk.pub{color:var(--gold);border-color:var(--gold-dim);} .pk.sight{color:var(--steel);border-color:rgba(127,160,165,.5);}
+  .pc-dist{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cream);margin-left:auto;}
+  .pc-name{font-family:'Fraunces',serif;font-weight:500;font-size:19px;line-height:1.2;margin:6px 0 2px;}
+  .pc-r{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--steel);margin-left:6px;}
+  .pc-note{font-size:14.5px;color:var(--cream-dim);line-height:1.45;}
+  .pc-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .pc-btns button.linkbtn{background:transparent;cursor:pointer;}
+  .me-dot{width:18px;height:18px;border-radius:50%;background:#F2ECDC;border:3px solid #0E2620;box-shadow:0 0 0 3px rgba(242,236,220,.45);}
+  .nmark{width:16px;height:16px;border-radius:50%;border:2px solid #0E2620;box-shadow:0 0 0 1px rgba(242,236,220,.4);}
   .callout{margin-top:22px;border:1px solid var(--line);border-radius:3px;padding:18px 20px;background:rgba(242,236,220,.03);}
   .callout .lab{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin:0 0 8px;}
   .callout p{margin:0;font-size:15px;line-height:1.6;color:var(--cream-dim);max-width:620px;}
@@ -225,6 +250,7 @@
       <button id="tab-blocks" role="tab" class="active" aria-selected="true">Days</button>
       <button id="tab-itinerary" role="tab" aria-selected="false">Itinerary</button>
       <button id="tab-map" role="tab" aria-selected="false">Map</button>
+      <button id="tab-near" role="tab" aria-selected="false">Near me</button>
     </div>
   </div>
 </div>
@@ -232,6 +258,18 @@
 <main class="wrap">
   <div id="blocks-view"><div class="blocks" id="blocks"></div></div>
   <div id="itinerary-view" class="hidden"><div id="itinerary"></div></div>
+  <div id="near-view" class="hidden">
+    <div class="near-head">
+      <div class="chiprow" id="near-cities" role="group" aria-label="City"></div>
+      <div class="chiprow" id="near-cats" role="group" aria-label="Type"></div>
+      <button id="near-locate" class="locbtn" type="button">Use my location</button>
+      <div id="near-status" aria-live="polite"></div>
+    </div>
+    <div id="near-map"></div>
+    <div class="near-legend"><span><i class="ldot pubdot"></i>Pubs</span><span><i class="ldot sightdot"></i>Must-sees</span><span><i class="ldot medot"></i>You</span></div>
+    <div id="near-list"></div>
+    <button id="near-more" class="linkbtn hidden" type="button">Show more</button>
+  </div>
   <div id="map-view" class="hidden">
     <div class="mapchips" id="mapchips"></div>
     <h3 id="map-title"></h3>
@@ -598,14 +636,15 @@
 
   // ---------- navigation ----------
   var view='blocks';
-  var views={blocks:document.getElementById('blocks-view'),itinerary:document.getElementById('itinerary-view'),map:document.getElementById('map-view')};
-  var tabs={blocks:document.getElementById('tab-blocks'),itinerary:document.getElementById('tab-itinerary'),map:document.getElementById('tab-map')};
+  var views={blocks:document.getElementById('blocks-view'),itinerary:document.getElementById('itinerary-view'),map:document.getElementById('map-view'),near:document.getElementById('near-view')};
+  var tabs={blocks:document.getElementById('tab-blocks'),itinerary:document.getElementById('tab-itinerary'),map:document.getElementById('tab-map'),near:document.getElementById('tab-near')};
   var fab=document.getElementById('nowfab');
   function setView(v){
     view=v;
     Object.keys(views).forEach(function(k){ views[k].classList.toggle('hidden',k!==v); tabs[k].classList.toggle('active',k===v); tabs[k].setAttribute('aria-selected',k===v?'true':'false'); });
     fab.classList.toggle('hidden', v!=='itinerary');
     if(v==='map') showMap(mapDay===null ? defaultMapDay() : mapDay);
+    if(v==='near') showNear();
   }
   function nowTarget(){
     var live=null, nx=null;
@@ -645,6 +684,7 @@
     setView('itinerary'); var it=curDay()?nowTarget():null; scrollToEl(it?it.el:document.getElementById('day-1'),false,false);
   });
   tabs.map.addEventListener('click',function(){ setView('map'); scrollToEl(mapChips,false,false); });
+  tabs.near.addEventListener('click',function(){ setView('near'); scrollToEl(document.getElementById('near-cities'),false,false); });
   fab.addEventListener('click',jumpNow);
   document.addEventListener('click',function(e){
     var bb=e.target.closest('.bbtn');
@@ -764,6 +804,133 @@
       } else straight();
     }).catch(straight);
   }
+
+
+  // ---------- near me ----------
+  var PLACES = {"london":{"pubs":[{"n":"Ye Olde Cheshire Cheese","lat":51.5143677,"lng":-0.1071699,"pid":"ChIJM0n9x7IEdkgRZllOf-c6RYQ","r":4.4,"note":"Rebuilt in 1667 after the Great Fire. A maze of low rooms and cellars with a Dickens-era feel."},{"n":"Ye Olde Mitre","lat":51.5184368,"lng":-0.1073928,"pid":"ChIJswdeu00bdkgReAjdjnjxnTs","r":4.7,"note":"Hidden down an alley off Hatton Garden, famously hard to find. Tiny snugs and well-kept ales. Closed Sundays."},{"n":"The Blackfriar","lat":51.5121153,"lng":-0.1037137,"pid":"ChIJKatbfqUEdkgRDmgIHPcWgBU","r":4.5,"note":"Art Nouveau interior with copper reliefs of the Blackfriars monks. Come for the room and a pint."},{"n":"The Lamb & Flag","lat":51.51173,"lng":-0.125675,"pid":"ChIJqfzVUcwEdkgR7cvsVYJ8daE","r":4.5,"note":"18th-century Covent Garden pub down an alley, a Dickens regular. Crowded after work."},{"n":"The Grenadier","lat":51.5014936,"lng":-0.1549011,"pid":"ChIJvRUdGzsFdkgRjMb8HOnGdb0","r":4.6,"note":"Tucked on a quiet Belgravia mews. Tiny and atmospheric, known for its beef Wellington. Book ahead."},{"n":"The Mayflower","lat":51.5018403,"lng":-0.0536173,"pid":"ChIJo3GMMiQDdkgRLEL6Mu4LR8s","r":4.7,"note":"Historic riverside pub in Rotherhithe with a deck over the Thames. Book for dinner."},{"n":"Prospect of Whitby","lat":51.507066,"lng":-0.0511105,"pid":"ChIJDZPR4SgDdkgR2_djyaGslOM","r":4.5,"note":"Riverside pub on the Wapping shore with centuries of history and a gallows out back. Thames views."},{"n":"The Spaniards Inn","lat":51.569884,"lng":-0.1740278,"pid":"ChIJix2arm8adkgR6AQ5Md_aF8Y","r":4.5,"note":"On the edge of Hampstead Heath with a big beer garden. Pair it with the Parliament Hill view."},{"n":"Princess Louise","lat":51.5173491,"lng":-0.121591,"pid":"ChIJD_JK9DQbdkgRfRhIaTjoh4M","r":4.4,"note":"Victorian gin-palace interior with etched glass and wooden booths. Samuel Smith's beers."},{"n":"The Seven Stars","lat":51.5149693,"lng":-0.1134953,"pid":"ChIJT0S2zLQEdkgRx1K-taxBiHA","r":4.5,"note":"Tiny pub by the Royal Courts of Justice, said to date to 1602. Resident cat and a great beer list."},{"n":"The George Inn","lat":51.5042925,"lng":-0.0904364,"pid":"ChIJo15e1lkDdkgR-X84Yf2cA0s","r":4.3,"note":"Last surviving galleried coaching inn in London, with a cobbled courtyard. Steps from Borough Market."},{"n":"The French House","lat":51.5127471,"lng":-0.1317318,"pid":"ChIJBUj2-9IEdkgRmSNxHI1mals","r":4.5,"note":"A Soho institution that serves beer by the half pint. French bistro food upstairs."},{"n":"The Victoria, Bayswater","lat":51.5135055,"lng":-0.1711899,"pid":"ChIJRamCokwFdkgRiotnAZdJF3U","r":4.6,"note":"Ornate Victorian pub a short walk from the hotel, with an upstairs dining room. Good first-night pint."},{"n":"The Ladbroke Arms","lat":51.5090928,"lng":-0.2029014,"pid":"ChIJB9cPfeQPdkgRSd-oA-sUBm0","r":4.6,"note":"Notting Hill gastropub with a well-reviewed Sunday roast and a pretty terrace. Book ahead."},{"n":"The Churchill Arms","lat":51.5069117,"lng":-0.194801,"pid":"ChIJGTDVMfoPdkgROs9QO9Kgmjc","r":4.5,"note":"The flower-covered Kensington pub with Thai food inside. Photogenic and busy, so go early."},{"n":"The Cow","lat":51.5191832,"lng":-0.1953518,"pid":"ChIJG_M6kwMQdkgRpah7EzQMmlI","r":4.4,"note":"Notting Hill pub known for oysters with a pint of Guinness and a seafood menu."},{"n":"The Harp","lat":51.5097194,"lng":-0.1259429,"pid":"ChIJKXTZKcwEdkgRZs8E0eH5zVI","r":4.6,"note":"Tiny Covent Garden pub with an award-winning cask ale list. Standing room and a snug upstairs."},{"n":"Anchor Bankside","lat":51.5072874,"lng":-0.0928389,"pid":"ChIJDRaQMVYDdkgRU-mYSkd2cNU","r":4.2,"note":"Thames-side terraces with skyline views, near the Globe. Busy but a good riverside stop."},{"n":"The Warwick Castle","lat":51.5220403,"lng":-0.1838523,"pid":"ChIJo1EeGKkadkgRF6qptUS7DjI","r":4.3,"note":"A friendly Little Venice local on a back street, a good pub to end a canal walk."},{"n":"The Dove, Hammersmith","lat":51.4905047,"lng":-0.2348502,"pid":"ChIJ_Yaf0rQPdkgRRaitXvO7pjw","r":4.5,"note":"Historic Thames pub by Hammersmith Bridge with riverside seats. Out west, so only if you are nearby."},{"n":"Portobello Rd Distillery","lat":51.5147971,"lng":-0.2045532,"pid":"ChIJiSEOCuIPdkgRaw8_bISprFo","r":4.3,"note":"Working gin distillery and bar on Portobello Road, about a 10 to 15 min walk from the hotel. Tastings and cocktails."}],"sights":[{"n":"Tower of London","lat":51.5081124,"lng":-0.0759493,"pid":"ChIJ3TgfM0kDdkgRZ2TV4d1Jv6g","r":4.7,"note":"Fortress, palace and prison, with Yeoman Warder tours and the ravens. Plan about 3 hours and book ahead."},{"n":"Tower Bridge","lat":51.5054564,"lng":-0.0753565,"pid":"ChIJSdtli0MDdkgRLW9aCBpCeJ4","r":4.8,"note":"Walking across is free. Good views of the Tower and the skyline, and the high walkways cost extra."},{"n":"St Paul's Cathedral","lat":51.5138453,"lng":-0.0983506,"pid":"ChIJh7wHoqwEdkgR3l-vqQE1HTo","r":4.7,"note":"Climb the dome for the Whispering Gallery and the view. The highlights tour and crypt are included with a ticket."},{"n":"Churchill War Rooms","lat":51.5021585,"lng":-0.1293572,"pid":"ChIJq4lX1doEdkgR5JXPstgQjc0","r":4.6,"note":"The preserved WWII bunker where the war was directed. Book ahead, since it sells out."},{"n":"Borough Market","lat":51.5055826,"lng":-0.0904808,"pid":"ChIJD2bPdVcDdkgRuUSgnOXnKDE","r":4.6,"note":"One of London's oldest food markets. Go before the lunch crowd. Closed Mondays."},{"n":"Shakespeare's Globe","lat":51.508076,"lng":-0.097194,"pid":"ChIJIRauBakEdkgRjoeyuI53AOc","r":4.6,"note":"Rebuilt Elizabethan theatre on the South Bank. Tours, or a play from the standing yard."},{"n":"Sky Garden","lat":51.5112422,"lng":-0.0835493,"pid":"ChIJgaI8bFIDdkgRhJJqLMxsFdU","r":4.6,"note":"Free 360-degree view from the top of 20 Fenchurch St, but you need a booked slot. A restaurant or bar booking also gets you in."},{"n":"Royal Observatory Greenwich","lat":51.476853,"lng":-0.0005002,"pid":"ChIJp9ypjCqo2EcRAoQcRV-yqzE","r":4.6,"note":"Stand on the Prime Meridian. The grounds are free, the galleries cost extra, and the hill has a great view."},{"n":"Cutty Sark","lat":51.4828646,"lng":-0.0095917,"pid":"ChIJAVlhMIUCdkgRCJEgHVbITq4","r":4.6,"note":"The preserved tea clipper in Greenwich. You can walk under the hull. Reach it by Thames Clipper."},{"n":"Parliament Hill Viewpoint","lat":51.5596682,"lng":-0.1597044,"pid":"ChIJ_4LX7l4adkgRSNxuMRF6HF0","r":4.7,"note":"Free skyline view from Hampstead Heath. Best at sunset. Pair it with the Spaniards Inn."},{"n":"Portobello Road Market","lat":51.5170002,"lng":-0.205847,"pid":"ChIJG1YB2m4RdkgRsetv9D40NGY","r":4.5,"note":"Antiques, vintage and street food. Busiest on Saturdays, so go in the morning."},{"n":"Little Venice","lat":51.5211994,"lng":-0.1827805,"pid":"ChIJ_c6npyobdkgRwkGJb16SWVA","r":4.4,"note":"Narrowboats and a flat canal towpath. Walk it toward Camden if you want a longer stroll."},{"n":"Speakers' Corner","lat":51.5109972,"lng":-0.1587426,"pid":"ChIJX6RrZjQFdkgR9BDZU8RsW58","r":4.1,"note":"Historic free-speech spot at the northeast corner of Hyde Park. Sundays are the best day for the debates."},{"n":"British Museum","lat":51.5194133,"lng":-0.1269566,"pid":"ChIJB9OTMDIbdkgRp0JWbQGZsS8","r":4.5,"note":"Free entry and huge, so pick a few galleries. Open late on Fridays."},{"n":"Leadenhall Market","lat":51.512766,"lng":-0.0835289,"pid":"ChIJURt2jFIDdkgRsxERfqYhtSo","r":4.4,"note":"Victorian covered market with ornate ironwork, next to Sky Garden. Livelier on weekday evenings."},{"n":"St Dunstan in the East","lat":51.509715,"lng":-0.0824601,"pid":"ChIJbxkx_1EDdkgRLfU_tC9tPb0","r":4.7,"note":"A garden growing inside a church ruin damaged in the Blitz. Free, quiet, and near the Tower."},{"n":"Postman's Park","lat":51.516767,"lng":-0.097715,"pid":"ChIJNz1L7lQbdkgRHKuTVhZjwx0","r":4.6,"note":"Small park by St Paul's with a wall of tiles remembering everyday acts of heroism."},{"n":"Wellington Arch","lat":51.5023,"lng":-0.1517,"pid":null,"r":null,"note":"Triumphal arch at Hyde Park Corner. Apsley House is next door, and the arch itself can be climbed."}]},"tottenham":{"pubs":[{"n":"The Antwerp Arms","lat":51.6018616,"lng":-0.0748557,"pid":"ChIJL_PbH6EedkgRxdrKsrusoFs","r":4.5,"note":"Oldest pub in N17, community-owned, with pints under \u00a36 and Redemption ales. Opens 10 AM Sunday. About an 8 min walk."},{"n":"The Bricklayers","lat":51.6059292,"lng":-0.0683139,"pid":"ChIJ2QxA5pgedkgRJrree604sMY","r":4.5,"note":"The very Spurs pub, 4 min walk. Opens 11 AM Sunday. Mostly standing, burgers only, and jammed on gamedays."},{"n":"The Bill Nicholson","lat":51.6057135,"lng":-0.0616288,"pid":"ChIJ_9Blpe4fdkgRRNqpWjOXDxQ","r":4.5,"note":"Small pub on Northumberland Park near the stadium. Opens at noon on Sundays. Get there early for a seat."},{"n":"The Beehive","lat":51.5922342,"lng":-0.069263,"pid":"ChIJ2Y1_aSIcdkgR7CSyp_56e48","r":4.4,"note":"Big pub with a huge beer garden and plenty of screens. About an 18 min walk. Opens 10 AM Sunday."},{"n":"No.8 Tottenham","lat":51.602015,"lng":-0.067434,"pid":"ChIJt4Ww_p4edkgRs99YR5lo9WY","r":3.9,"note":"Large sports pub on the High Road with a big outdoor area. One reviewer says prices are steep."},{"n":"Redemption Brew Co. Taproom","lat":51.6062682,"lng":-0.058364,"pid":"ChIJc6-bxIQedkgRyyeu_gGSuLg","r":4.8,"note":"Local brewery taproom, about a 15 min walk. Regular hours are weekdays, but a CAMRA listing says it opens for NFL games. Check socials."}],"sights":[{"n":"Tottenham Hotspur Stadium","lat":51.6042536,"lng":-0.0662083,"pid":"ChIJw47Y1ZgedkgRv3lfDmrWLVc","r":4.7,"note":"Eagles vs. Jaguars, kickoff 2:30 PM. Roads around it are closed on gameday, so walk from the station."},{"n":"Bruce Castle Museum","lat":51.5991494,"lng":-0.0754686,"pid":"ChIJNas2LB4cdkgR2GPsdv4C1YE","r":4.4,"note":"Free local-history museum in a Tudor manor house. Open Wednesday to Sunday 1 to 5 PM, so not before a Sunday game."},{"n":"Markfield Beam Engine","lat":51.5818538,"lng":-0.0614716,"pid":"ChIJYaKZVzkcdkgRtp6u1s7cFpQ","r":4.6,"note":"Free museum with a restored Victorian steam beam engine. Open only on certain days, so check first."},{"n":"Walthamstow Wetlands","lat":51.5848032,"lng":-0.0511725,"pid":"ChIJgUtOcjEcdkgR6Y_NLIc0XBQ","r":4.6,"note":"Big reservoir nature reserve with long walks and birds. Open 9:30 to 4. A bit beyond the stadium area."}]},"dublin":{"pubs":[{"n":"The Brazen Head","lat":53.3449326,"lng":-6.2763323,"pid":"ChIJ5wqZWS8MZ0gRq5auJO7NbDE","r":4.5,"note":"Claims to be Ireland's oldest pub, dating to 1198 (others say oldest in Dublin). Courtyard, live music, stew. Queues form."},{"n":"The Long Hall","lat":53.3418349,"lng":-6.2652064,"pid":"ChIJHRhbu50OZ0gRGT1aPIaL698","r":4.6,"note":"Victorian interior with a long bar and snugs. A proper old-school pint and a good Irish coffee."},{"n":"Kehoe's","lat":53.3411639,"lng":-6.2594277,"pid":"ChIJ8wUZ8psOZ0gRY_Z66tz8_OE","r":4.6,"note":"Old-school pub off Grafton Street with a snug by the door. Locals love it for a well-kept pint."},{"n":"Toner's","lat":53.3377566,"lng":-6.2524254,"pid":"ChIJR1zDf5cOZ0gRmIywC_s8buc","r":4.5,"note":"Literary old pub on Baggot Street with a famous snug and a big back courtyard."},{"n":"Mulligan's","lat":53.3468861,"lng":-6.2554264,"pid":"ChIJ30HSXIUOZ0gRJNh5Fic-vUE","r":4.7,"note":"No-frills pub famous for its Guinness, away from the Temple Bar crowds. Close to The Vintage Kitchen."},{"n":"Neary's","lat":53.3407477,"lng":-6.2611905,"pid":"ChIJPUh5D5wOZ0gRVnkOMmDe_2M","r":4.5,"note":"Classic, cosy pub off Grafton Street. Good sandwiches and conversation. Not a music pub."},{"n":"McDaids","lat":53.3412535,"lng":-6.2610003,"pid":"ChIJD5ACDZwOZ0gRLoUwJsyc2mg","r":4.4,"note":"Grand high-ceilinged pub just off Grafton Street with dark wood and well-kept pints."},{"n":"Doheny & Nesbitt","lat":53.33805,"lng":-6.252831,"pid":"ChIJR1zDf5cOZ0gR5CT7Xyk8ERQ","r":4.6,"note":"Big multi-floor traditional pub with food, across the street from Toner's. Busy."},{"n":"The Stag's Head","lat":53.3438235,"lng":-6.2636588,"pid":"ChIJ8ZuR6JwOZ0gR5jtVW54gEHM","r":4.5,"note":"Victorian pub with stained glass and mirrors, tucked down Dame Court. Good pub food."},{"n":"John Kavanagh, The Gravediggers","lat":53.369637,"lng":-6.2719898,"pid":"ChIJbz0dSnYOZ0gR8iLfsPNCRl8","r":4.7,"note":"Family-owned locals' pub beside Glasnevin Cemetery with a much-praised Guinness. A bit out of the center."},{"n":"L. Mulligan Grocer","lat":53.350998,"lng":-6.2823102,"pid":"ChIJMYBu6y0MZ0gRQcjM4SZg8PM","r":4.5,"note":"Stoneybatter gastropub with a big craft beer list and a good Scotch egg. Closed Mondays and Tuesdays."},{"n":"Whelan's","lat":53.33658,"lng":-6.265715,"pid":"ChIJeVe40Z8OZ0gRWQrpG0YiJXA","r":4.5,"note":"Live-music venue and bar with gigs most nights. Check who is playing."},{"n":"The Cobblestone","lat":53.3498083,"lng":-6.2778361,"pid":"ChIJ8ycFoS4MZ0gRgQlPeN5HAvQ","r":4.7,"note":"Trad sessions every night, no cover, in a worn old Smithfield pub. Arrive early for a spot near the musicians."},{"n":"O'Donoghue's","lat":53.3382083,"lng":-6.2542292,"pid":"ChIJw-DhupkOZ0gRzPibivFAces","r":4.6,"note":"The pub where The Dubliners got their start. Real sessions most nights and a crowded room."},{"n":"The Palace Bar","lat":53.3458948,"lng":-6.2596063,"pid":"ChIJY8EByoQOZ0gRSMYJds1CQHU","r":null,"note":"Old-fashioned Victorian pub just outside the Temple Bar crowds. A calm first pint."},{"n":"Grogan's","lat":53.3422396,"lng":-6.2626181,"pid":"ChIJMTezXZwOZ0gRcOVCwfcvvk8","r":null,"note":"Beloved no-frills pub on South William Street, known for its toasties and arty regulars."},{"n":"The Temple Bar Pub","lat":53.3454742,"lng":-6.2641937,"pid":"ChIJR9mP8ScMZ0gRWDrL2dfqLBA","r":4.6,"note":"The touristy one, with live music all day. Fun once, pricey, and more a photo stop than a locals' pub."},{"n":"Vintage Cocktail Club","lat":53.3417289,"lng":-6.2621407,"pid":"ChIJJ5P3tZwOZ0gRul-DaLTh-jk","r":4.5,"note":"Speakeasy-style cocktail bar inside the Powerscourt Townhouse. The door is easy to miss."}],"sights":[{"n":"Dublin Castle","lat":53.3428861,"lng":-6.2674284,"pid":"ChIJif9mNYcOZ0gRhlbhwPbNDwU","r":4.3,"note":"A medieval tower under Georgian state rooms. The grounds are free and paid tours cover more rooms. Chester Beatty is on site."},{"n":"Christ Church Cathedral","lat":53.343513,"lng":-6.2710602,"pid":"ChIJGw9ASiYMZ0gRy9yiaCZxNZI","r":4.5,"note":"Medieval cathedral with an atmospheric crypt. Closes early on some days, so check hours."},{"n":"St Patrick's Cathedral","lat":53.3395154,"lng":-6.2714767,"pid":"ChIJpVg1bAmnREgRVLEltpvmyJI","r":4.5,"note":"Nearly 800 years old, with a Jonathan Swift connection. Paid entry, and the gardens are free."},{"n":"St Stephen's Green","lat":53.3369532,"lng":-6.259999,"pid":"ChIJLaxzLpkOZ0gRglayQz8vRKA","r":null,"note":"Victorian city park with ponds and a bandstand. A good rest stop between sights."},{"n":"Guinness Storehouse","lat":53.3418088,"lng":-6.2867156,"pid":"ChIJawXFQIQOZ0gRoucFdZIzGbM","r":4.4,"note":"Booked Tuesday at 11:30. Finish at the Gravity Bar for the pint and the view."},{"n":"Trinity College & Book of Kells","lat":53.3437935,"lng":-6.2545716,"pid":"ChIJ3Y7HLZsOZ0gRZ2FxjA3-ACc","r":null,"note":"Cobbled campus in the middle of the city. Book timed entry for the Book of Kells."},{"n":"Kilmainham Gaol","lat":53.3418701,"lng":-6.3098048,"pid":"ChIJbXwkCloMZ0gRO3zBD1Jo1Bg","r":null,"note":"Guided tour of the cells where the 1916 leaders were held. Sells out, so book ahead."},{"n":"Phoenix Park","lat":53.3558823,"lng":-6.3298133,"pid":"ChIJe1F08akNZ0gRa1ndmi3YJqE","r":4.7,"note":"One of the largest enclosed city parks in Europe, with a wild deer herd. Free."},{"n":"Chester Beatty Library","lat":53.3422356,"lng":-6.2672762,"pid":"ChIJwdmRcp0OZ0gRqwweUr4wWKE","r":null,"note":"Free museum in the Dublin Castle grounds with remarkable manuscripts and art."},{"n":"Marsh's Library","lat":53.3390768,"lng":-6.2705909,"pid":"ChIJWdUYWVANZ0gRWufpHlh2e6o","r":null,"note":"Ireland's oldest public library, from 1707. Quiet and rarely crowded."},{"n":"Iveagh Gardens","lat":53.3351376,"lng":-6.2610343,"pid":"ChIJIZpbZp8OZ0gR5pvUpWaYfzQ","r":null,"note":"A walled Victorian garden most visitors never find."},{"n":"EPIC Irish Emigration Museum","lat":53.3483124,"lng":-6.2481792,"pid":"ChIJvwEAK4wOZ0gRZ-4HLJnKYZk","r":4.5,"note":"Interactive museum telling the story of the Irish diaspora. Rarely crowded."},{"n":"Jameson Distillery Bow St","lat":53.3481851,"lng":-6.2770289,"pid":"ChIJs0Ciwy4MZ0gRFFpl7MaNZAQ","r":4.7,"note":"Whiskey tasting at the original distillery site."},{"n":"Ha'penny Bridge","lat":53.3463347,"lng":-6.2631029,"pid":"ChIJFXuSYYMOZ0gRb7gtcRw21Uc","r":4.5,"note":"Iron pedestrian bridge from 1816 over the Liffey. Lovely at sunset."},{"n":"National Museum of Ireland, Archaeology","lat":53.3402225,"lng":-6.2549209,"pid":"ChIJS7Q-vDEMZ0gRWoYY0_5aAVY","r":4.6,"note":"Free. Bog bodies and ancient gold. Open 1 to 5 PM Monday and Sunday, 10 to 5 otherwise."},{"n":"Experience Glasnevin","lat":53.3696223,"lng":-6.2770345,"pid":"ChIJbx62-9gNZ0gRZ706E15-wyQ","r":4.8,"note":"Guided tour of Ireland's national cemetery, with a tower climb. Pair it with the Gravediggers pub next door."},{"n":"GPO Museum","lat":53.3495282,"lng":-6.2606027,"pid":"ChIJN2VMFYQOZ0gRJOGvwqfeTjQ","r":4.6,"note":"1916 Easter Rising museum inside the historic General Post Office. Closed Sundays."},{"n":"Howth Cliff Walk","lat":53.3749697,"lng":-6.0491765,"pid":"ChIJt1HgQ2wDZ0gRmjy6v2LOpYU","r":4.9,"note":"Coastal cliff walk with trails of several lengths. Take the DART from the city and bring a rain jacket."},{"n":"Croke Park Skyline","lat":53.360549,"lng":-6.2503657,"pid":"ChIJOR3eY2EOZ0gRrRVBsmn7Ans","r":4.7,"note":"Walk the stadium roof for views over Dublin. Check your booking for tour times."},{"n":"Killiney Hill Viewpoint","lat":53.2644922,"lng":-6.1119849,"pid":"ChIJ4TFch1UHZ0gRXwkzJVWX6II","r":4.9,"note":"Short uphill walk to a panoramic view over Dublin Bay. Free. South of the city."}]},"belfast":{"pubs":[{"n":"The Crown Liquor Saloon","lat":54.5947018,"lng":-5.9341146,"pid":"ChIJLekq-PcIYUgR_y_PCR7UhMY","r":4.4,"note":"Ornate Victorian gin palace with wooden snugs, owned by the National Trust. Reserve a snug on weekends."},{"n":"Kelly's Cellars","lat":54.5994941,"lng":-5.9321271,"pid":"ChIJfyixBFcIYUgRZwuk93gEWng","r":4.7,"note":"One of Belfast's oldest pubs, with live trad music. Crowded downstairs, and food is upstairs."},{"n":"The Duke of York","lat":54.6018,"lng":-5.9274,"pid":"ChIJz8jH-FMIYUgRQ2fjgVoF7t4","r":4.7,"note":"Cathedral Quarter pub covered in old Guinness and whiskey memorabilia, with live music. Sit out on the street."},{"n":"The Dirty Onion","lat":54.601644,"lng":-5.9263769,"pid":"ChIJi12r6FMIYUgRGW0bMvkTLxs","r":4.4,"note":"Cathedral Quarter pub in a building from 1780, with live music and a chicken restaurant upstairs. Opens 2 PM."},{"n":"The John Hewitt","lat":54.6019402,"lng":-5.9285651,"pid":"ChIJLwKBUVEIYUgRx1HwHiKfyi0","r":4.5,"note":"Cathedral Quarter bar with local beers and trad sessions some nights. Closed Mondays."},{"n":"Fibber Magee's","lat":54.5948985,"lng":-5.9336985,"pid":"ChIJlR7d8_cIYUgRS5xUYW9pubA","r":4.4,"note":"Big pub with live music, next to the Crown. The red entrance faces a small square at the back."},{"n":"The Garrick","lat":54.5973352,"lng":-5.9266596,"pid":"ChIJnx9v4lUIYUgR1ifRLhWcYU4","r":4.5,"note":"Traditional pub with good Guinness and Irish stew. Trad music some nights, but one reviewer says it ended by 7:30 PM."},{"n":"Bittles Bar","lat":54.5986482,"lng":-5.9242789,"pid":"ChIJd32ir1UIYUgRhuLU-NlNtOI","r":4.3,"note":"Tiny wedge-shaped pub covered in Guinness signs, famed for banter and a whiskey wall. Pints only, and seats fill."},{"n":"The Spaniard","lat":54.6010133,"lng":-5.9263331,"pid":"ChIJ7wVHElQIYUgRfoFKYPOxL1Y","r":4.5,"note":"Quirky small bar on the edge of the Cathedral Quarter with live music upstairs."},{"n":"The Second Fiddle","lat":54.6015189,"lng":-5.9261705,"pid":"ChIJQaTugUIJYUgRju8XRPO1ZTk","r":4.1,"note":"Quieter backup behind the Dirty Onion. Open Thursday to Sunday. Mixed reviews, so treat it as the fallback."},{"n":"Madden's Bar","lat":54.600101,"lng":-5.9337168,"pid":"ChIJd4qWQlcIYUgRw3BEKlBXAcU","r":4.7,"note":"The trad session pub, with music most nights. Sessions are often upstairs, where it is easier to hear."}],"sights":[{"n":"Titanic Belfast","lat":54.6081106,"lng":-5.9099511,"pid":"ChIJcYljJ7AJYUgREnKW65tyJUw","r":4.5,"note":"Friday's anchor. Built on the original slipways and open from 8:50 AM. Budget 2.5 to 3 hours and book a timed entry."},{"n":"SS Nomadic","lat":54.6063635,"lng":-5.9112186,"pid":"ChIJDdvkS1YIYUgRHzWAGTOAdUU","r":4.5,"note":"The last White Star Line vessel. A visitor says entry is included in the Titanic ticket."},{"n":"Cathedral Quarter","lat":54.6022751,"lng":-5.9290968,"pid":"ChIJITi4T1EIYUgRed6i6D_A3XI","r":null,"note":"The walkable district of pubs, live music and street art. Dinner and a session here."},{"n":"Belfast City Hall","lat":54.5966472,"lng":-5.9300677,"pid":"ChIJoUKCLFYIYUgRCKStoJs_kgo","r":4.7,"note":"1906 landmark with a green copper dome. The grounds are free, and the self-guided tour is a few pounds."},{"n":"St George's Market","lat":54.5961402,"lng":-5.9219548,"pid":"ChIJFa7vmf8IYUgR8wY6TeDnHmg","r":4.6,"note":"Food and craft market. Open Friday to Sunday only, so it works Friday morning."},{"n":"Giant's Causeway","lat":55.2408073,"lng":-6.5115554,"pid":"ChIJD48V9EQpYEgR0h_eGaCMIvM","r":4.7,"note":"Thursday's stop. The basalt columns and the cliff path above them. Arrive before the tour buses."},{"n":"Cave Hill Country Park","lat":54.6497451,"lng":-5.9502043,"pid":"ChIJKyPh2PcIYUgRR4rg__AL6g4","r":4.8,"note":"Hill walks with views over Belfast Lough, north of the city. Bring boots. A longer outing than the center sights."},{"n":"Peace Wall (Cupar Way)","lat":54.6009653,"lng":-5.9564282,"pid":"ChIJocs3r2YIYUgRni0qXnEacAc","r":4.5,"note":"Murals and messages along the wall between communities. Most people see it on a black cab tour. Go in daylight."},{"n":"Dunluce Castle","lat":55.2106924,"lng":-6.5796063,"pid":"ChIJxUProkQvYEgRuJotYcUdqRA","r":4.6,"note":"Cliff-top castle ruin near the Causeway, open 9:30 to 4:30. An easy pull-over on the coast road."},{"n":"Old Bushmills Distillery","lat":55.2028537,"lng":-6.5172267,"pid":"ChIJdW92FOYuYEgRjm5TTLZJxB4","r":4.6,"note":"Whiskey tour and tasting a few minutes from the Causeway. Book ahead."},{"n":"Ulster Museum","lat":54.5824228,"lng":-5.9353219,"pid":"ChIJ2XBr8u4IYUgRp-Da33URhrM","r":4.7,"note":"Free and big, from art and dinosaurs to the Troubles. Closed Mondays."},{"n":"Crumlin Road Gaol","lat":54.6089559,"lng":-5.9423649,"pid":"ChIJj6949UQIYUgRH4wa2ncvKeo","r":4.6,"note":"Victorian prison tour. A guided tour is better than self-guided. About a 30 min walk from the center."},{"n":"Albert Memorial Clock","lat":54.6008708,"lng":-5.9243741,"pid":"ChIJNbydYVQIYUgRWAeYkXQfxsc","r":4.4,"note":"Victorian clock tower that leans slightly. A quick photo stop."}]}};
+  var CITY_META = {
+    london:{label:'London',c:[51.5074,-0.1278],z:12},
+    tottenham:{label:'Tottenham',c:[51.6035,-0.068],z:14},
+    dublin:{label:'Dublin',c:[53.344,-6.265],z:13},
+    belfast:{label:'Belfast',c:[54.599,-5.926],z:13}
+  };
+  var CITY_ORDER=['london','tottenham','dublin','belfast'];
+  var NEAR={city:'london',cat:'all',me:null,map:null,layer:null,meLayer:null,limit:12,asked:false,markers:{}};
+  var nearCities=document.getElementById('near-cities'), nearCats=document.getElementById('near-cats'),
+      nearStatus=document.getElementById('near-status'), nearList=document.getElementById('near-list'),
+      nearMore=document.getElementById('near-more'), nearLocate=document.getElementById('near-locate');
+
+  function hav(a,b){ var R=6371,p=Math.PI/180,dl=(b[0]-a[0])*p,dg=(b[1]-a[1])*p;
+    var h=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*p)*Math.cos(b[0]*p)*Math.sin(dg/2)*Math.sin(dg/2);
+    return 2*R*Math.asin(Math.sqrt(h)); }
+  function fmtDist(km){ var mi=km*0.621371; if(mi<0.1) return '<0.1 mi'; return (mi<10?mi.toFixed(1):Math.round(mi))+' mi'; }
+  function walkTxt(km){ if(km>4) return 'too far to walk'; return Math.max(1,Math.round(km*1.3/5*60))+' min walk'; }
+  function dirUrl(p,city){
+    var far = NEAR.me && hav([NEAR.me.lat,NEAR.me.lng],[p.lat,p.lng])>3;
+    return 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(p.n+', '+CITY_META[city].label)+(p.pid?'&destination_place_id='+p.pid:'')+'&travelmode='+(far?'transit':'walking');
+  }
+  function nearItems(){
+    var d=PLACES[NEAR.city], out=[];
+    if(NEAR.cat!=='sight') d.pubs.forEach(function(p,i){ out.push({k:'pub',p:p,id:'p'+i}); });
+    if(NEAR.cat!=='pub') d.sights.forEach(function(p,i){ out.push({k:'sight',p:p,id:'s'+i}); });
+    var use = NEAR.me && !NEAR.far;
+    out.forEach(function(x){ x.km = use ? hav([NEAR.me.lat,NEAR.me.lng],[x.p.lat,x.p.lng]) : null; });
+    if(use) out.sort(function(a,b){ return a.km-b.km; });
+    else out.sort(function(a,b){ return (b.p.r||4)-(a.p.r||4); });
+    return out;
+  }
+  function setNearStatus(s){ nearStatus.textContent=s; }
+  function buildNearChips(){
+    nearCities.innerHTML=''; CITY_ORDER.forEach(function(c){
+      var b=document.createElement('button'); b.type='button'; b.className='cbtn'+(NEAR.city===c?' active':''); b.textContent=CITY_META[c].label;
+      b.addEventListener('click',function(){ NEAR.city=c; NEAR.limit=12; renderNear(true,true); }); nearCities.appendChild(b); });
+    nearCats.innerHTML=''; [['all','All'],['pub','Pubs'],['sight','Must-sees']].forEach(function(x){
+      var b=document.createElement('button'); b.type='button'; b.className='cbtn'+(NEAR.cat===x[0]?' active':''); b.textContent=x[1];
+      b.addEventListener('click',function(){ NEAR.cat=x[0]; NEAR.limit=12; renderNear(false,false); }); nearCats.appendChild(b); });
+  }
+  function ensureNearMap(){
+    if(typeof L==='undefined'){ document.getElementById('near-map').innerHTML='<div class="map-msg">The map needs an internet connection. The list below still works.</div>'; return false; }
+    if(!NEAR.map){ document.getElementById('near-map').innerHTML='';
+      NEAR.map=L.map('near-map',{scrollWheelZoom:false});
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap contributors &copy; CARTO',subdomains:'abcd',maxZoom:19}).addTo(NEAR.map);
+      NEAR.layer=L.layerGroup().addTo(NEAR.map); NEAR.meLayer=L.layerGroup().addTo(NEAR.map); }
+    setTimeout(function(){ NEAR.map.invalidateSize(); },60);
+    return true;
+  }
+  function renderNear(refit,cityChanged){
+    buildNearChips();
+    var items=nearItems();
+    // map
+    if(ensureNearMap()){
+      NEAR.layer.clearLayers(); NEAR.markers={};
+      items.forEach(function(x){
+        var col=x.k==='pub'?'#C9A24B':'#7FA0A5';
+        var icon=L.divIcon({className:'',html:'<div class="nmark" style="background:'+col+'"></div>',iconSize:[16,16],iconAnchor:[8,8]});
+        var m=L.marker([x.p.lat,x.p.lng],{icon:icon}).addTo(NEAR.layer);
+        m.bindPopup('<div class="pop-time">'+(x.k==='pub'?'Pub':'Must-see')+(x.p.r?' · ★ '+x.p.r:'')+'</div><div class="pop-name">'+esc(x.p.n)+'</div><div class="popup-note" style="font-size:13px;color:#CFC8B4;margin:4px 0 8px">'+esc(x.p.note)+'</div><a class="linkbtn" style="min-height:40px" target="_blank" rel="noopener" href="'+esc(dirUrl(x.p,NEAR.city))+'">Directions ↗</a>',{maxWidth:240});
+        NEAR.markers[x.id]=m;
+      });
+      NEAR.meLayer.clearLayers();
+      if(NEAR.me && !NEAR.far){
+        L.marker([NEAR.me.lat,NEAR.me.lng],{icon:L.divIcon({className:'',html:'<div class="me-dot"></div>',iconSize:[18,18],iconAnchor:[9,9]}),zIndexOffset:1000}).addTo(NEAR.meLayer);
+        if(NEAR.me.acc && NEAR.me.acc<2000) L.circle([NEAR.me.lat,NEAR.me.lng],{radius:NEAR.me.acc,color:'#F2ECDC',weight:1,opacity:.5,fillOpacity:.06}).addTo(NEAR.meLayer);
+      }
+      if(refit){
+        var pts=[];
+        if(NEAR.me && !NEAR.far){
+          pts.push([NEAR.me.lat,NEAR.me.lng]); items.slice(0,4).forEach(function(x){ pts.push([x.p.lat,x.p.lng]); });
+          NEAR.map.fitBounds(pts,{padding:[40,40],maxZoom:16});
+        } else NEAR.map.setView(CITY_META[NEAR.city].c,CITY_META[NEAR.city].z);
+      }
+    }
+    // list
+    var shown=items.slice(0,NEAR.limit); nearList.innerHTML='';
+    shown.forEach(function(x){
+      var card=document.createElement('div'); card.className='pcard';
+      card.innerHTML='<div class="pc-top"><span class="pk '+x.k+'">'+(x.k==='pub'?'Pub':'Must-see')+'</span>'+(x.km!=null?'<span class="pc-dist">'+fmtDist(x.km)+' · '+walkTxt(x.km)+'</span>':'')+'</div>'+
+        '<div class="pc-name">'+esc(x.p.n)+(x.p.r?'<span class="pc-r">★ '+x.p.r+'</span>':'')+'</div><div class="pc-note">'+esc(x.p.note)+'</div>'+
+        '<div class="pc-btns"><a class="linkbtn" target="_blank" rel="noopener" href="'+esc(dirUrl(x.p,NEAR.city))+'">Directions ↗</a>'+(NEAR.map?'<button type="button" class="linkbtn pc-map" data-id="'+x.id+'">Show on map</button>':'')+'</div>';
+      nearList.appendChild(card);
+    });
+    nearMore.classList.toggle('hidden',items.length<=NEAR.limit);
+    nearMore.textContent='Show more ('+(items.length-NEAR.limit)+' left)';
+    if(!NEAR.me) setNearStatus('Tap "Use my location" to sort by what is closest. Showing the best-rated '+CITY_META[NEAR.city].label+' spots.');
+  }
+  var RAD={london:60,dublin:60,belfast:120};
+  function autoCity(){
+    if(!NEAR.me) return;
+    var me=[NEAR.me.lat,NEAR.me.lng], best=null, bd=1e9;
+    NEAR.far=false;
+    if(hav(me,CITY_META.tottenham.c)<3){ best='tottenham'; }
+    else ['london','dublin','belfast'].forEach(function(c){ var d=hav(me,CITY_META[c].c); if(d<bd){bd=d;best=c;} });
+    var dist=hav(me,CITY_META[best].c), lim=RAD[best]||3;
+    if(dist<lim){ NEAR.city=best; setNearStatus('Located. Closest first in '+CITY_META[best].label+'.'); }
+    else { NEAR.far=true; setNearStatus('You are not near London, Tottenham, Dublin or Belfast right now. Pick a city above to browse the best-rated spots.'); }
+  }
+  function locate(){
+    var override=params.get('loc');
+    if(override){ var q=override.split(','); NEAR.me={lat:+q[0],lng:+q[1],acc:30}; NEAR.limit=12; autoCity(); renderNear(true,false); return; }
+    if(!navigator.geolocation){ setNearStatus('Location is not available on this device. Pick a city above.'); return; }
+    setNearStatus('Finding you…');
+    navigator.geolocation.getCurrentPosition(function(pos){
+      NEAR.me={lat:pos.coords.latitude,lng:pos.coords.longitude,acc:pos.coords.accuracy}; NEAR.limit=12; autoCity(); renderNear(true,false);
+    },function(err){
+      var m = err.code===1 ? 'Location is blocked for this site. Turn it on in your browser settings, then tap Use my location.' : err.code===3 ? 'Finding you took too long. Step outside or tap Use my location again.' : 'Could not get your location. Pick a city above.';
+      setNearStatus(m);
+    },{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+  }
+  function showNear(){
+    renderNear(true,false);
+    if(!NEAR.asked){ NEAR.asked=true; locate(); }
+  }
+  nearLocate.addEventListener('click',locate);
+  nearMore.addEventListener('click',function(){ NEAR.limit+=12; renderNear(false,false); });
+  nearList.addEventListener('click',function(e){
+    var b=e.target.closest('.pc-map'); if(!b||!NEAR.map) return;
+    var m=NEAR.markers[b.getAttribute('data-id')]; if(!m) return;
+    document.getElementById('near-map').scrollIntoView({behavior:'smooth',block:'center'});
+    NEAR.map.setView(m.getLatLng(),16); m.openPopup();
+  });
 
   // ---------- init ----------
   buildBlocks(); buildItinerary(); buildStrip(); update();
