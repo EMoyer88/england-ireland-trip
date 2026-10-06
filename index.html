@@ -443,6 +443,16 @@
    ]}
   ];
 
+  var CARTO_KEY='cb1_3zk2_1_12353c6795dfabf0c8e9dd4e';
+  function addBasemap(m){
+    var attr='&copy; OpenStreetMap contributors &copy; CARTO';
+    function layer(style){ return L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/'+style+'/{z}/{x}/{y}{r}.png?key='+CARTO_KEY,{attribution:attr,subdomains:'abcd',maxZoom:19}); }
+    var cur=layer('dark_all').addTo(m), errs=0, swapped=false;
+    // if the dark style is refused, fall back to the Voyager style
+    cur.on('tileerror',function(){ errs++; if(errs>=3 && !swapped){ swapped=true; m.removeLayer(cur); layer('voyager').addTo(m); } });
+    return cur;
+  }
+
   // ---------- helpers ----------
   function d(date, hm, off){ return new Date(date+'T'+hm+':00'+off); }
   function px(url,w){ if(!url) return ''; return url.indexOf('/place-photos/')>-1 ? url.replace(/=s\d+$/,'=s'+w) : url; }
@@ -735,7 +745,7 @@
     if(typeof L==='undefined'){ msg('The map needs an internet connection to load.'); return false; }
     var host=document.getElementById('leaflet-map');
     if(!map){ host.innerHTML=''; map=L.map('leaflet-map',{scrollWheelZoom:false}).setView([53.9,-6.5],5);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap contributors &copy; CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
+      addBasemap(map);
       group=L.layerGroup().addTo(map); }
     setTimeout(function(){ map.invalidateSize(); },60);
     return true;
@@ -852,7 +862,7 @@
     if(typeof L==='undefined'){ document.getElementById('near-map').innerHTML='<div class="map-msg">The map needs an internet connection. The list below still works.</div>'; return false; }
     if(!NEAR.map){ document.getElementById('near-map').innerHTML='';
       NEAR.map=L.map('near-map',{scrollWheelZoom:false});
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap contributors &copy; CARTO',subdomains:'abcd',maxZoom:19}).addTo(NEAR.map);
+      addBasemap(NEAR.map);
       NEAR.layer=L.layerGroup().addTo(NEAR.map); NEAR.meLayer=L.layerGroup().addTo(NEAR.map); }
     setTimeout(function(){ NEAR.map.invalidateSize(); },60);
     return true;
