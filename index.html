@@ -143,6 +143,14 @@
   .stop-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--steel);letter-spacing:.04em;}
   .stop-name{font-family:'Fraunces',serif;font-weight:500;font-size:19px;line-height:1.2;margin:2px 0 4px;}
   .stop-note{font-size:14.5px;color:var(--cream-dim);line-height:1.5;max-width:580px;}
+
+  .how{margin-top:12px;padding:12px 14px 4px;border:1px solid var(--line);border-left:3px solid var(--gold-dim);border-radius:3px;background:rgba(242,236,220,.03);max-width:600px;}
+  .how-h{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
+  .how ol{margin:6px 0 10px;padding-left:20px;font-size:14.5px;color:var(--cream);line-height:1.5;}
+  .how li{margin-bottom:5px;}
+  .stop-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .linkbtn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid var(--gold-dim);border-radius:3px;color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.05em;text-decoration:none;}
+  .linkbtn:hover{background:rgba(201,162,75,.12);text-decoration:none;}
   .callout{margin-top:22px;border:1px solid var(--line);border-radius:3px;padding:18px 20px;background:rgba(242,236,220,.03);}
   .callout .lab{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin:0 0 8px;}
   .callout p{margin:0;font-size:15px;line-height:1.6;color:var(--cream-dim);max-width:620px;}
@@ -230,7 +238,7 @@
 <script>
 (function(){
   var EU = '+01:00', EDT = '-04:00';
-  var PH = {"dublinAirport": "https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300", "morrison": "https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300", "fishShop": "https://lh3.googleusercontent.com/place-photos/AG9NLjB78qiyjHfl3YfoMS_ajkXRE6oQavWYj6N4WJRLp69s_qATSSScDKZpkefCItfMCme5PXoSHX7SyJnIgwPQ9Dxsdn6tKRJPY7ELwAOc9U5DycQVnNtljzahRxdlCpSA9DFh0tFahuIQkUG2bQ=s300", "odonoghues": "https://lh3.googleusercontent.com/place-photos/AG9NLjDjhxwUEO-IED_PqpJEwT0J7T5j1E--wBXOlrCwVw137jk8QfcF5EA-iPipoM50y4GZowtIHJpvU6_Vea2ljWlcc9jn0IpiDXSQAH5TnWZJ6JrWdxfKXcr5NpXGQISTmTEny5llNMoAhShDR9GP3rakKA=s300", "phoenix": "https://lh3.googleusercontent.com/place-photos/AG9NLjDz1MpzweaHuK422Umyp1qM4bNM2m0-Zb50rmVI75R0-CSBDjvA4QT2cx2ZMtLlE1t5WmKALE-gJTEvlntHrlbA1PfjjEewVNvvwuD7rkUcBcCJvRgDHDNrK22EkBANqWTufXX4IUoMeP43KQ=s300", "guinness": "https://lh3.googleusercontent.com/place-photos/AG9NLjCKnC_izut-45pkWG_qp7YC94zsrw0a4vNaFoqlk6fuhpDpLeYBR0srRtk56IeBFqJKiWASmdSx_M2DVCVZXrf6dr_TZD6BCypr0TuX3Koy9JHLbOrq2B0EpVP7N0wteOxH6uA_ADPDvoafTH0=s300", "kilmainham": "https://lh3.googleusercontent.com/place-photos/AG9NLjAbndGSZos218J4hvpgMVx73cmeE3wWS8TTdPuES7u71q1qTuEObEUVW4xteueXSLn4cP_PL2Qyp4oZMSXdgSGsOqCf0kOnogAHLfAFgRIVyqD3_48Si6-UMwjFIbHVabb-Qiu6K7G6rKY6IHplwo6G=s300", "grandCanal": "https://lh3.googleusercontent.com/place-photos/AG9NLjBNny54KjwScqgKrs3BUV4OyQlWPdhNhOfnVN7GRn2tI1b-UuGjGjrOlg_4Tzgak7Gl5TpVMeDCrtPGLiEkxg_B0xjLd0HQ3hSkaimCw-WdU3cDFU1nTe5mLEJw8cUjj8hlq9ZE10R5abcq9A=s300", "epic": "https://lh3.googleusercontent.com/place-photos/AG9NLjDesKlcs8B48WhRHeNcWq4OwE1DfNz34r-yXPHw5mYPHAnlqXycQdNqUMBtaFUplMBSZh9Gwiyae-gmes1cqcoPJX48RFv1BcAJFfnmYg3FUlhvs2RyHJaJZQpPnI6XfjI4DcMX4CW5C8RxxI0=s300", "jameson": "https://lh3.googleusercontent.com/place-photos/AG9NLjBZgcXYah0cl38sEw57YCQrCQFpEgd5a28bko7RK_5_Dg5GGAkuJZaMTfvXJjUqMjcG82eJtQukAohUvDvkV_RjJHadcmkHRLsA077D-1_LPb9g53lTXo99p3LRCp2tItrC4LggjLMACVLDo8C-GobEgA=s300", "titanic": "https://lh3.googleusercontent.com/place-photos/AG9NLjB_y-eC4Kop57XdZuWoT7JtOU1KXzQniDZxAr-CisShJ8uPJ9qaGgLDi0zM9nlUOQurxkQUP7DmL-uH3IemBNfS_Jf_njXqDD8GYa4unpLIeRrxHU9_YUom3uH2qlCHyQ6uWJiLQpZKTulk=s1200", "cathedralQ": "https://lh3.googleusercontent.com/place-photos/AG9NLjDSUZBnR3KNezQplH0f4OP7z9ubXpN1P8EIyIMZAVGGBdrDdXaSjKEMBtJYvKqtSeUh6o00mqQs1622CUYECIO7dpE5y4YyOtVCIKMuRa5ZBPSxi0p_M8D0JkdKA_Op9OUmB9NPI0rbc1fFbE8=s300", "causeway": "https://lh3.googleusercontent.com/place-photos/AG9NLjA9K5O6spY8lE1caVxQ2F-SWSsDJw4h7Ct84D_BkibdHY32MT4zIz-dS_OaPezvyxdbObl6-XkS6_U3V1VdBZ9Dn2cwU5gwr0ureb7ktalbW9PwFYSqoqzDyHYVjB1ggvxYlORkQVYCoge0tkE=s300", "portobello": "https://lh3.googleusercontent.com/grass-cs/AABkmLdxUTzYIOL41Tp3BSmzmr6Oqn5xhBppQxjhT34AbeUvnQxVhQU_9YSdBxo15ErC7zovo8tjR3wm3hJgsK6huFuED9h-1swojvC_FeKCsKdBbADz90-gSn7TNNl_YbPI11C7P0pVhFY7d9Nt=s4800-w800-h600", "spurs": "https://lh3.googleusercontent.com/grass-cs/AABkmLcAhRx4EiX4-proUnZbsYEuPP5hBYRM5PiRs8XL3ks1eSQI1P_gYDio4LK-RUftZEft416H0EaZCSQ3Cco4T8QKlN_Hm0AIsSaPDXzToaIG3TaqkxDFQg__qVhnlC3vuqLV0463dA=s4800-w800-h600", "george": "https://lh3.googleusercontent.com/grass-cs/AABkmLdlouOfmYPGwLStuJ3mpcv847i_hFIociySqdRT5CNrbsp-MwYC7t7kRThNf1GZQZSfm5hiF8gP5Hk7PqTXWpEVBXexACe7JnvLOmCP2LYByAVGrmqXe0bmf3LESJPFvbnH7aRInyQVX0Cc=s4800-w800-h600", "vintage": "https://lh3.googleusercontent.com/grass-cs/AABkmLdBWVT-BlhMfBWTbsptIWOxOVT8-SbA1g17p40v9EQ4RwIAyj8N_JnvErQq7R5fGL5lEZ0mtUI5hVMim1MujZ4_Ss1XowbJy4jQI4fpojyN0qwARwXCqoYTPo29fKeZCC7ltrZEuNbnbLNV=s4800-w800-h600", "littleVenice": "https://lh3.googleusercontent.com/grass-cs/AABkmLdjoY9QTHkOyfrcR6mehd03YgKIvzbTJ4pqhSus_JVEnBht66aXMpcZDI8S6C-P5awKfrmJFQKso-x2nVQ9VGpLEn9TujXfFnmlBF9-fBDbhHBEwFBYJACVeBq2ovyrXir0-tEj4woHB-Wu=s4800-w800-h600", "towerBridge": "https://lh3.googleusercontent.com/grass-cs/AABkmLcikvUoA6p-yWeQB7PKkEUrtkNGr8SmSnT_K-Tpc7MxOtYDnjqe-V3R95HmCDCG27Hccr9J_caDoduhgS8yRaRkXKvLcqzM4XPOi_Z_x5QOBxWpeEur6owqFaA3qjigyoAaMd-i=s4800-w800-h600", "borough": "https://lh3.googleusercontent.com/grass-cs/AABkmLdBYk_6XbSXv4eL838RckkwAB46UMUq9vocoN0nR2gw89D8o5HPrV3C5NuIIp6oBGwehA9ti5fzrl2QGf4LQ_5dByj0znB7lioUEQav3veBo1JLunAdrYdBH5C8jJ4yhuxwVaQq=s4800-w800-h600", "maddens": "https://lh3.googleusercontent.com/grass-cs/ACvplmOHl71fS0RVRglmUMM6Rd4ocNr0dON57usITUKHo2KpYUBdQC1_3jaIcir7ZMsH4CW2JFbQLfe4aEYoOKTm6AegNFclLoH3uC3NZLKXCp7kN88JsC6wv86S8lUL_z3yJ1XICIMI=s4800-w800-h600", "heathrow": "https://lh3.googleusercontent.com/grass-cs/AABkmLeQuwWQ7XVRBZ9jvqNeOuRilmJLV6Q3DJk8c-V-ekoJhvfd-Xc_qDIjPYDIMk4vl1tKub9POPxoZOBUcIhcxLgWu-wwEkfm4GdREo-jActx4qZ_7pUvRUEnybpKWcapbVi7jT3TDGyN7xW6=s4800-w800-h600", "cobblestone": "https://lh3.googleusercontent.com/grass-cs/AABkmLcYFuXddmi51liYzD4oITcf5bRJNYBk0Ezpx6GyBv8DKroPTPlCD4JOSEXuUHeBZ3zp3P_PniM_1_3om0tV0_nYFeNItKTXe8nXzH9OKA8lB7VRvFdt0OGwJutO6LFpJPtPs_G0MKrUeN-u=s4800-w800-h600", "hydeSeek": "https://lh3.googleusercontent.com/grass-cs/AABkmLdt7DeIjYpQ8g8F_0cVkfJnxeNaYn_35pXZX1Rbm1oDnNcLYRkSUC3-j0-pO0lzrv4-hhjrLtHHwdS-Iah6zIHNJBCawz5x4FUjniJT9JWZSrFkPdtzB-zXO-gSRsADmr1iew_ZpWM3-t1t=s4800-w800-h600"};
+  var PH = {"dublinAirport": "https://lh3.googleusercontent.com/grass-cs/ACvplmMpddM_ChLEIt6S-eSu5kmncGcBrks_GltsxwrMBlDuKdvhKYLNSGFa8uzQtr1tRbOBVulNcpbX2eJX6mO2WohwJk1yKAecRGcZj89Mm1EI_aIhmNQGclZUmTpgSraStakKrlTJNw=s4800-w800-h600", "fishShop": "https://lh3.googleusercontent.com/grass-cs/AABkmLfk8diNJS_VMkLq7g36QZAODwAR7-XTraBfzks0EzHyH0lt503y4VJScmuZmeVy06sF-hE1LoTOCAkoaa7fSQ06WEPWzmk7PmFjgb2IQgCxaPlb5LDzJ9p4RrNw9HQK8k8RGV_0=s4800-w800-h600", "odonoghues": "https://lh3.googleusercontent.com/grass-cs/AABkmLfQVY7OupjID8MmVIS2eCTSIMomr05Wx0Mx1k0v9VhdmPiSZ10zlF-fiOdtT_lmMXsBU59rMHcHj5IxJyJgybPtssEEL0-zzenIp8_H2o_FvlVn2h4WXd-wkbXQy6lNZXF8uhM8OQ=s4800-w800-h600", "phoenix": "https://lh3.googleusercontent.com/grass-cs/AABkmLfXOaoEg8wKwUjoGDPogCKASIFJSAJZhQiKn2Y8KDkfXOOHGhgQ1bCy5pfs2iiyh3LV6EGHVADkL0Oyhg3djqUeY5bh5kSFr0RU700v6NzCRpx2cdI87NW8xEpvkoEdxd381_3_=s4800-w800-h600", "guinness": "https://lh3.googleusercontent.com/grass-cs/AABkmLenbukTrKt0755JHe2y7wpYHYucRYy2AoTg43xh8Tlj7rVdKomMVagBTDpCsHJSSNT1oSZU7_5wJX3kz-pb_siIgOlbcm0ANXluZMQM80iCM6sv3bq8lwGTLZQ0uwDRRGnqbhco6A=s4800-w800-h600", "grandCanal": "https://lh3.googleusercontent.com/grass-cs/AABkmLesS_z2TenXIHoOyaPGqg7H5mKC0BF54lXf01lhM-VIEs_79IxIv7I4afmflFSGvq_Blf1to9d1S2AFJIW0b_HtWBwAEdSA5h9OH1ibXdwj06D7jfH1oV5X7nyuft5qEiFATXZf=s4800-w800-h600", "epic": "https://lh3.googleusercontent.com/grass-cs/AABkmLfxXEtnOP_z9694hdsk1hWfjM0BbQDan8KgnqCAhqI193MUh2j1mkb4jIcH0u48sUW9f2Okw7hbnnt0vu3aSsfYpys0rx6HVq1OFFBKyaLXqzkEYpibUoGj6MjQHdF1plpswsvuFQ=s4800-w800-h600", "jameson": "https://lh3.googleusercontent.com/grass-cs/AABkmLcewBT1tgYNzQekwxp_3t3YFAaeIncRwy4Eqg0Mg77VV_dbAYuUWwgXslXOED3HZLxkkVAIBAbb67ltvhQAT_3cpN4H5PKDK6accXu99kL75pUXpEqVlAQoLNinCezPqeY2l790xHc4ph2L=s4800-w800-h600", "titanic": "https://lh3.googleusercontent.com/grass-cs/AABkmLdUHEGSCTGIGTWuX0gqdBGaBFpyfgUq7SiCAUB-aqrXAuFEwiC1qSf-hdLJ__-Lfl1h0jOAd77NC4jmj32DVy5tRLPV5bP8A-TU5eKPF62IpXZZfKw7JJ-adaEsj5P9T_1UoOM=s4800-w800-h600", "cathedralQ": "https://lh3.googleusercontent.com/grass-cs/ACvplmO6d_zx6u8-RKZjPm6AnowoUONVBBPZkjIcmelNsRueM2474_FgukGXqyhbQVEXjDL00D4fMZMnlDyg90mvtfAx8poWfS4LNBFaiV7LpUyzzVRzKEaDCV5CIVnWxfMwzGAztVg9NA=s4800-w800-h600", "causeway": "https://lh3.googleusercontent.com/grass-cs/AABkmLfdr5--PKTgITKe3B2InjFTyKqVZrWjd1htpr5fMe0bcKUQ462SFzrjWFtq98dwGJJe1sW6M4hfdjDrb4Msm_wWlsZE7pVmmRyK3-61HvyUY_sEQmbOtrC9cE9hP5InyU9H7FxxPQ=s4800-w800-h600", "portobello": "https://lh3.googleusercontent.com/grass-cs/AABkmLdxUTzYIOL41Tp3BSmzmr6Oqn5xhBppQxjhT34AbeUvnQxVhQU_9YSdBxo15ErC7zovo8tjR3wm3hJgsK6huFuED9h-1swojvC_FeKCsKdBbADz90-gSn7TNNl_YbPI11C7P0pVhFY7d9Nt=s4800-w800-h600", "spurs": "https://lh3.googleusercontent.com/grass-cs/AABkmLcAhRx4EiX4-proUnZbsYEuPP5hBYRM5PiRs8XL3ks1eSQI1P_gYDio4LK-RUftZEft416H0EaZCSQ3Cco4T8QKlN_Hm0AIsSaPDXzToaIG3TaqkxDFQg__qVhnlC3vuqLV0463dA=s4800-w800-h600", "george": "https://lh3.googleusercontent.com/grass-cs/AABkmLdlouOfmYPGwLStuJ3mpcv847i_hFIociySqdRT5CNrbsp-MwYC7t7kRThNf1GZQZSfm5hiF8gP5Hk7PqTXWpEVBXexACe7JnvLOmCP2LYByAVGrmqXe0bmf3LESJPFvbnH7aRInyQVX0Cc=s4800-w800-h600", "vintage": "https://lh3.googleusercontent.com/grass-cs/AABkmLdBWVT-BlhMfBWTbsptIWOxOVT8-SbA1g17p40v9EQ4RwIAyj8N_JnvErQq7R5fGL5lEZ0mtUI5hVMim1MujZ4_Ss1XowbJy4jQI4fpojyN0qwARwXCqoYTPo29fKeZCC7ltrZEuNbnbLNV=s4800-w800-h600", "littleVenice": "https://lh3.googleusercontent.com/grass-cs/AABkmLdjoY9QTHkOyfrcR6mehd03YgKIvzbTJ4pqhSus_JVEnBht66aXMpcZDI8S6C-P5awKfrmJFQKso-x2nVQ9VGpLEn9TujXfFnmlBF9-fBDbhHBEwFBYJACVeBq2ovyrXir0-tEj4woHB-Wu=s4800-w800-h600", "towerBridge": "https://lh3.googleusercontent.com/grass-cs/AABkmLcikvUoA6p-yWeQB7PKkEUrtkNGr8SmSnT_K-Tpc7MxOtYDnjqe-V3R95HmCDCG27Hccr9J_caDoduhgS8yRaRkXKvLcqzM4XPOi_Z_x5QOBxWpeEur6owqFaA3qjigyoAaMd-i=s4800-w800-h600", "borough": "https://lh3.googleusercontent.com/grass-cs/AABkmLdBYk_6XbSXv4eL838RckkwAB46UMUq9vocoN0nR2gw89D8o5HPrV3C5NuIIp6oBGwehA9ti5fzrl2QGf4LQ_5dByj0znB7lioUEQav3veBo1JLunAdrYdBH5C8jJ4yhuxwVaQq=s4800-w800-h600", "maddens": "https://lh3.googleusercontent.com/grass-cs/ACvplmOHl71fS0RVRglmUMM6Rd4ocNr0dON57usITUKHo2KpYUBdQC1_3jaIcir7ZMsH4CW2JFbQLfe4aEYoOKTm6AegNFclLoH3uC3NZLKXCp7kN88JsC6wv86S8lUL_z3yJ1XICIMI=s4800-w800-h600", "heathrow": "https://lh3.googleusercontent.com/grass-cs/AABkmLeQuwWQ7XVRBZ9jvqNeOuRilmJLV6Q3DJk8c-V-ekoJhvfd-Xc_qDIjPYDIMk4vl1tKub9POPxoZOBUcIhcxLgWu-wwEkfm4GdREo-jActx4qZ_7pUvRUEnybpKWcapbVi7jT3TDGyN7xW6=s4800-w800-h600", "cobblestone": "https://lh3.googleusercontent.com/grass-cs/AABkmLcYFuXddmi51liYzD4oITcf5bRJNYBk0Ezpx6GyBv8DKroPTPlCD4JOSEXuUHeBZ3zp3P_PniM_1_3om0tV0_nYFeNItKTXe8nXzH9OKA8lB7VRvFdt0OGwJutO6LFpJPtPs_G0MKrUeN-u=s4800-w800-h600", "hydeSeek": "https://lh3.googleusercontent.com/grass-cs/AABkmLdt7DeIjYpQ8g8F_0cVkfJnxeNaYn_35pXZX1Rbm1oDnNcLYRkSUC3-j0-pO0lzrv4-hhjrLtHHwdS-Iah6zIHNJBCawz5x4FUjniJT9JWZSrFkPdtzB-zXO-gSRsADmr1iew_ZpWM3-t1t=s4800-w800-h600", "alex": "https://lh3.googleusercontent.com/grass-cs/AABkmLfv9K4dXPnmv6u5ifS1nxNI50GaSNXspzauNugXkimV22PLmEqyQIYM65AN4hgVjngGSoQdqwbsUDjRsxQEpmahkuPfphyYZX91i-7TGYVw_3g32ZFrSO_dWqi-klEo2Xowbax4ne7p_Xls=s4800-w800-h600", "templeBar": "https://lh3.googleusercontent.com/grass-cs/AABkmLeX0-n0_ZS3uBVG6jKl8Ay9Gxx7aGf3YMkSOpfRrOipcD2xk74x14X6PPSgxTN9w2S_QsdAYPGCvqaZQzpX-1CvehB6uPawCzHxjX4EEzAr1_gvU1gXumnxE_imA0hyMt5xOGga=s4800-w800-h600", "vcc": "https://lh3.googleusercontent.com/grass-cs/AABkmLd6WamEi88MqkmDXD38I5_OUtTib6EwSOnwS17bYbH1e7nQLQFNqIx6qqj8gZWtoBu92dIKMMWDKfTF0Mke3-cceLkgt9Kh8EuUb2pAppEvQ1IxYz9PsblWtyG7ecHpKNXNIOtyrbR_Q2s=s4800-w800-h600", "wilde": "https://lh3.googleusercontent.com/grass-cs/AABkmLd3jU7tp12msIsxJBtJ306vHSb4h-u6YYn64dfGUvO7KR2cgjp23v2eMQihmlha8-5iR2Dfq1tk8VtlvmsMYe1p2oIgFgSRgNtbsCOiRzncfbkeK2WM_0R48zj98Rcugc7rDaPKRUlI8Ssy=s4800-w800-h600"};
 
   var LOC = {
     heathrow:{n:'Heathrow Airport',lat:51.4679903,lng:-0.4550471},
@@ -241,8 +249,10 @@
     george:{n:'The George Inn',lat:51.5042925,lng:-0.0904364},
     towerBridge:{n:'Tower Bridge',lat:51.5054564,lng:-0.0753565},
     spurs:{n:'Tottenham Hotspur Stadium',lat:51.6042536,lng:-0.0662083},
-    alex:{n:'The Alex Hotel',lat:53.3401,lng:-6.2453},
-    templeBar:{n:'Temple Bar',lat:53.3455,lng:-6.2644},
+    alex:{n:'The Alex Hotel',lat:53.3418512,lng:-6.2490854},
+    vcc:{n:'Vintage Cocktail Club',lat:53.3417289,lng:-6.2621407},
+    wilde:{n:'WILDE Restaurant',lat:53.3414915,lng:-6.2610799},
+    templeBar:{n:'The Temple Bar Pub',lat:53.3454742,lng:-6.2641937},
     philly:{n:'Philadelphia',lat:39.8719,lng:-75.2411},
     boston:{n:'Boston',lat:42.3656,lng:-71.0096},
     dublinAirport:{n:'Dublin Airport',lat:53.425632,lng:-6.2573755},
@@ -292,17 +302,43 @@
      {k:'idea',t:'Pub dinner',n:'Somewhere easy on the way back. Keep tonight early, game tomorrow.',a:'19:00',b:'21:00'}
    ]},
    {n:4,date:'2026-10-11',dow:'Sun',md:'Oct 11',city:'London',title:'Eagles vs. Jaguars',where:'Hyde & Seek → Tottenham Hotspur Stadium',hero:'spurs',route:'none',callout:{lab:'Why this day made the trip',text:'Week 5 of the NFL London Games. The Eagles are the road team in the Jaguars’ second home, their third regular-season game abroad and their first at Tottenham. Kickoff is 2:30 PM local, which is 9:30 AM ET, on NFL Network back home.'},items:[
-     {k:'idea',t:'Sunday roast, Notting Hill',n:'The Ladbroke Arms or The Elgin, both a short walk from Portobello Road. A proper roast before the game.',a:'10:45',b:'12:15'},
-     {k:'plan',t:'Head to Tottenham',n:'Underground north, about 45–60 min from central London. Pubs near the stadium fill early. Check the stadium’s entry time before you leave.',a:'12:30',b:'14:00',loc:'spurs',ph:'spurs'},
+     {k:'idea',t:'Sunday roast, Notting Hill',n:'The Ladbroke Arms or The Elgin, both a short walk from Portobello Road. Book a table around 10:30 so you are out by 11:45.',a:'10:30',b:'11:45'},
+     {k:'plan',t:'Get to the stadium',n:'Leave the hotel by noon. About an hour door to door, so you arrive roughly 75 minutes before kickoff. Roads around the stadium are closed on gameday, so you will walk from the station. Journey times are my estimates, so check TfL Go before you leave.',a:'12:00',b:'13:15',lab:'12:00 PM',loc:'spurs',ph:'spurs',
+       how:[
+        {h:'Getting there (about 1 hr)',s:[
+          'Walk to Lancaster Gate station, a minute from the hotel. Central line.',
+          'Take the Central line eastbound 9 stops to Liverpool Street (about 20 min).',
+          'At Liverpool Street, follow the Overground signs to the Weaver line platforms. Take any train to Enfield Town or Cheshunt. Not Chingford.',
+          'Ride 10 stops to White Hart Lane (about 20 to 25 min). You pass Seven Sisters and Bruce Grove on the way.',
+          'Walk about 5 min to the stadium. Follow the crowd.'
+        ]},
+        {h:'If the Overground is a mess',s:[
+          'Central line to Oxford Circus (3 stops), then the Victoria line northbound to Tottenham Hale, then about a 25 min walk. The NFL says the Victoria line is especially busy on gamedays, so this is the backup.'
+        ]}
+       ],
+       links:[{t:'Directions in Google Maps',u:'https://www.google.com/maps/dir/?api=1&origin=Hyde+%26+Seek+London+Hyde+Park&origin_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&destination=Tottenham+Hotspur+Stadium&destination_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc&travelmode=transit'},{t:'Stadium on the map',u:'https://www.google.com/maps/search/?api=1&query=Tottenham+Hotspur+Stadium&query_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc'},{t:'White Hart Lane station',u:'https://www.google.com/maps/search/?api=1&query=White+Hart+Lane+station+London'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}]},
      {k:'booked',t:'Eagles vs. Jaguars',n:'NFL London Games at Tottenham Hotspur Stadium. Get in early for the pregame atmosphere.',a:'14:30',b:'17:45',lab:'2:30 PM kickoff',loc:'spurs',ph:'spurs'},
-     {k:'plan',t:'Postgame dinner and pack',n:'Dinner back in central London. Trains and the Underground are packed right after the final whistle. Early start tomorrow: leave the hotel around 8:45 AM.',a:'19:00',b:'21:00'}
+     {k:'plan',t:'Back to Hyde & Seek',n:'Everyone leaves at once, and White Hart Lane and the Victoria line get slammed. Either linger near the stadium for 45 minutes, or use Northumberland Park, which has more train capacity. Do not use Silver Street or Bruce Grove stations.',a:'17:45',b:'19:15',lab:'After the game',
+       how:[
+        {h:'Getting back (about 1 hr, plus queues)',s:[
+          'Walk about 10 min to Northumberland Park station (Greater Anglia). Station entrances change after games, so follow the stewards.',
+          'Take a train to London Liverpool Street (roughly 15 to 20 min). Fewer stops than the Overground.',
+          'At Liverpool Street, take the Central line westbound (Ealing Broadway or West Ruislip) 9 stops to Lancaster Gate (about 20 min).'
+        ]},
+        {h:'Other options',s:[
+          'Walk 25 min to Tottenham Hale, Victoria line south to Oxford Circus, then the Central line 3 stops west to Lancaster Gate.',
+          'Taxi or Uber: get picked up at least a 15 min walk from the stadium. Roads next to it are closed.'
+        ]}
+       ],
+       links:[{t:'Directions back in Google Maps',u:'https://www.google.com/maps/dir/?api=1&origin=Tottenham+Hotspur+Stadium&origin_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc&destination=Hyde+%26+Seek+London+Hyde+Park&destination_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&travelmode=transit'},{t:'Northumberland Park station',u:'https://www.google.com/maps/search/?api=1&query=Northumberland+Park+station+London'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}]},
+     {k:'plan',t:'Dinner and pack',n:'Keep it easy. Early start tomorrow: leave the hotel around 8:45 AM for the Dublin flight.',a:'19:30',b:'21:00'}
    ]},
    {n:5,date:'2026-10-12',dow:'Mon',md:'Oct 12',city:'Dublin',title:'Arrival, Dublin',where:'Heathrow → The Alex Hotel, Dublin',hero:'odonoghues',route:'foot',items:[
      {k:'plan',t:'Leave Hyde & Seek for Heathrow',n:'Elizabeth line from Paddington to Terminal 2, about 30 min. Aim to be at the airport about 2 hours early.',a:'08:45',b:'10:00',lab:'8:45 AM'},
      {k:'booked',t:'EI159 · London to Dublin',n:'Aer Lingus, Terminal 2. 12:00 PM to 1:30 PM. Short hop over, same time zone.',a:'12:00',b:'13:30',lab:'12:00 PM',loc:'heathrow',noroute:true},
-     {k:'booked',t:'Check in at The Alex Hotel',n:'Fenian Street. Then a loop over the Ha’penny Bridge and along the Liffey to shake off the travel.',a:'14:30',b:'16:00',loc:'alex'},
+     {k:'booked',t:'Check in at The Alex Hotel',n:'Fenian Street. Then a loop over the Ha’penny Bridge and along the Liffey to shake off the travel.',a:'14:30',b:'16:00',loc:'alex',ph:'alex'},
      {k:'plan',t:'Fish Shop, Stoneybatter',n:'Small, no reservations. Some of the best fish and chips in the city.',a:'18:30',b:'20:00',loc:'fishShop',ph:'fishShop'},
-     {k:'idea',t:'Temple Bar',n:'Loud, touristy, and worth a look once. Live music spilling out of every doorway.',a:'20:15',b:'21:15',loc:'templeBar'},
+     {k:'idea',t:'Temple Bar',n:'Loud, touristy, and worth a look once. Live music spilling out of every doorway.',a:'20:15',b:'21:15',loc:'templeBar',ph:'templeBar'},
      {k:'plan',t:"O'Donoghue's session",n:'The pub where The Dubliners started. Real trad sessions most nights.',a:'21:30',b:'23:30',loc:'odonoghues',ph:'odonoghues'}
    ]},
    {n:6,date:'2026-10-13',dow:'Tue',md:'Oct 13',city:'Dublin',title:'Guinness and a haunted walk',where:'Guinness Storehouse → Dame Street → Smithfield',hero:'guinness',route:'foot',items:[
@@ -317,11 +353,11 @@
      {k:'plan',t:'Grand Canal Dock',n:'Sleep in, then walk the canal. Quiet, modern, hardly any tourists.',a:'10:00',b:'11:00',loc:'grandCanal',ph:'grandCanal'},
      {k:'plan',t:'EPIC · The Irish Emigration Museum',n:'Interactive and consistently well reviewed.',a:'11:00',b:'13:00',loc:'epic',ph:'epic'},
      {k:'plan',t:'Jameson Distillery Bow St',n:'A whiskey tasting at the original distillery site.',a:'14:30',b:'16:00',loc:'jameson',ph:'jameson'},
-     {k:'booked',t:'Dinner at WILDE',n:'Reservation at 6:30 PM.',a:'18:30',b:'20:15',lab:'6:30 PM'},
-     {k:'plan',t:'Vintage Cocktail Club',n:'After-dinner drinks.',a:'20:30',b:'22:30'}
+     {k:'booked',t:'Dinner at WILDE',n:'Reservation at 6:30 PM.',a:'18:30',b:'20:15',lab:'6:30 PM',loc:'wilde',ph:'wilde'},
+     {k:'plan',t:'Vintage Cocktail Club',n:'After-dinner drinks. Tucked inside the Powerscourt Townhouse, easy to miss, so look for the door.',a:'20:30',b:'22:30',loc:'vcc',ph:'vcc'}
    ]},
    {n:8,date:'2026-10-15',dow:'Thu',md:'Oct 15',city:'Northern Ireland',title:'Belfast, then the Causeway coast',where:'Dublin → Belfast → Giant’s Causeway → Belfast',hero:'causeway',route:'drive',callout:{lab:'Crossing the border',text:'No checkpoint, but carry passports. Northern Ireland uses pounds sterling. Tell the rental company you are crossing; some charge a cross-border fee.'},items:[
-     {k:'plan',t:'Pick up the car, depart Dublin',n:'Mostly motorway to Belfast, about 2 hrs via the M1. The rental booking isn’t in my notes: confirm the pickup spot and the cross-border policy.',a:'08:00',b:'08:45',loc:'alex'},
+     {k:'plan',t:'Pick up the car, depart Dublin',n:'Mostly motorway to Belfast, about 2 hrs via the M1. The rental booking isn’t in my notes: confirm the pickup spot and the cross-border policy.',a:'08:00',b:'08:45',loc:'alex',ph:'alex'},
      {k:'plan',t:'Drop bags, Cathedral Quarter',n:'Drop bags at the hotel before continuing north, no need to unpack yet. Add your Belfast hotel here once it’s booked.',a:'10:00',b:'10:45',loc:'cathedralQ',ph:'cathedralQ'},
      {k:'plan',t:"Giant's Causeway",n:'About 1–1.25 hrs north of Belfast. The basalt columns and the cliff path above them, one of the best natural sights in either country. Arrive before the tour buses if you can.',a:'12:00',b:'14:15',loc:'causeway',ph:'causeway'},
      {k:'plan',t:'Drive back to Belfast',n:'About 1–1.25 hrs along the coast.',a:'14:15',b:'15:30',loc:'cathedralQ'},
@@ -331,7 +367,7 @@
    {n:9,date:'2026-10-16',dow:'Fri',md:'Oct 16',city:'Belfast',title:'The Titanic, then home to Dublin',where:'Belfast → Titanic Belfast → Dublin',hero:'titanic',route:'drive',callout:{lab:'Why this is the day the trip is built around',text:'Titanic was designed, built and launched at the Harland & Wolff yard here, and the museum sits on the actual slipways. Opens 8:50 AM. One visitor says the SS Nomadic, the last White Star Line vessel, is included in the ticket; check when you book.'},items:[
      {k:'plan',t:'Depart Belfast',n:'Quick breakfast, then straight to the shipyard.',a:'08:30',b:'09:00',loc:'cathedralQ',ph:'cathedralQ'},
      {k:'plan',t:'Titanic Belfast',n:'Opens 8:50 AM. Budget 2.5 to 3 hours. Book a timed entry.',a:'09:00',b:'11:45',lab:'~9:00 AM',loc:'titanic',ph:'titanic'},
-     {k:'plan',t:'Straight back to Dublin',n:'About 2 hrs via the M1, no detours. Return the car before dinner.',a:'12:30',b:'15:00',loc:'alex'},
+     {k:'plan',t:'Straight back to Dublin',n:'About 2 hrs via the M1, no detours. Return the car before dinner.',a:'12:30',b:'15:00',loc:'alex',ph:'alex'},
      {k:'booked',t:'Dinner at The Vintage Kitchen',n:'Reserved for 6 PM.',a:'18:00',b:'20:00',lab:'6:00 PM',loc:'vintage',ph:'vintage'},
      {k:'idea',t:'One last pint',n:'Keep it short. Early start tomorrow.',a:'20:30',b:'21:30'}
    ]},
@@ -414,6 +450,15 @@
     });
   }
 
+  function howHtml(it){
+    if(!it.how) return '';
+    return '<div class="how">'+it.how.map(function(g){ return '<div class="how-h">'+esc(g.h)+'</div><ol>'+g.s.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ol>'; }).join('')+'</div>';
+  }
+  function linksHtml(it){
+    if(!it.links) return '';
+    return '<div class="stop-links">'+it.links.map(function(l){ return '<a class="linkbtn" target="_blank" rel="noopener" href="'+esc(l.u)+'">'+esc(l.t)+' ↗</a>'; }).join('')+'</div>';
+  }
+
   function buildItinerary(){
     var html='';
     days.forEach(function(day){
@@ -424,7 +469,7 @@
         html += '<div class="stop '+it.k+'" id="'+it.id+'">'+
           (it.ph&&PH[it.ph]?'<img class="stop-photo" alt="" loading="lazy" src="'+esc(px(PH[it.ph],300))+'">':'')+
           '<div class="stop-text"><div class="stop-meta"><span class="stop-time">'+esc(lab(it))+'</span><span class="chip" data-role="chip"></span><span class="tag '+it.k+'">'+TAGTXT[it.k]+'</span></div>'+
-          '<div class="stop-name">'+esc(it.t)+'</div><div class="stop-note">'+esc(it.n)+'</div></div></div>';
+          '<div class="stop-name">'+esc(it.t)+'</div><div class="stop-note">'+esc(it.n)+'</div>'+howHtml(it)+linksHtml(it)+'</div></div>';
       });
       html += '</div>';
       if(day.callout) html += '<div class="callout"><p class="lab">'+esc(day.callout.lab)+'</p><p>'+esc(day.callout.text)+'</p></div>';
