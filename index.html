@@ -2,925 +2,585 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0E2620">
 <title>London, Dublin &amp; Belfast — October 2026</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
   :root{
-    --ink:#0E2620;
-    --hull:#143C31;
-    --hull-2:#1A4A3D;
-    --cream:#F2ECDC;
-    --cream-dim:#CFC8B4;
-    --gold:#C9A24B;
-    --gold-dim:#8E7739;
-    --steel:#7FA0A5;
-    --rust:#A5623F;
-    --fog:#6E85A6;
-    --line: rgba(242,236,220,0.14);
-    --radius: 2px;
+    --ink:#0E2620; --hull:#143C31; --hull-2:#1A4A3D;
+    --cream:#F2ECDC; --cream-dim:#CFC8B4;
+    --gold:#C9A24B; --gold-dim:#8E7739;
+    --steel:#7FA0A5; --rust:#A5623F;
+    --line:rgba(242,236,220,0.14);
+    --r:3px;
   }
-
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  html,body{overflow-anchor:none;}
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
     *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
   }
+  body{margin:0;background:var(--ink);color:var(--cream);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px;}
+  button{font:inherit;color:inherit;cursor:pointer;}
+  a{color:var(--gold);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+  .hidden{display:none !important;}
 
-  body{
-    margin:0;
-    background:var(--ink);
-    color:var(--cream);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-
-  .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
-
-  a{color:var(--gold);text-decoration:none;}
-  a:hover{text-decoration:underline;}
-  a:focus-visible, button:focus-visible, summary:focus-visible{
-    outline:2px solid var(--gold);
-    outline-offset:3px;
-  }
-
+  /* ---------- Header ---------- */
   header.hero{
-    padding:56px 0 24px;
-    border-bottom:1px solid var(--line);
-    background:
-      radial-gradient(1200px 400px at 50% -100px, rgba(201,162,75,0.08), transparent 60%),
-      var(--ink);
+    padding:30px 0 16px;
+    background:radial-gradient(1000px 320px at 50% -120px, rgba(201,162,75,0.09), transparent 60%), var(--ink);
   }
-  .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:0.18em;
-    text-transform:uppercase;
-    color:var(--steel);
-    margin:0 0 14px;
-  }
-  h1.title{
-    font-family:'Fraunces',serif;
-    font-optical-sizing:auto;
-    font-weight:600;
-    font-size:clamp(34px,6vw,58px);
-    line-height:1.02;
-    margin:0 0 10px;
-    letter-spacing:-0.01em;
-  }
-  h1.title em{ font-style:italic; color:var(--gold); }
-  .sub{ font-size:16px; color:var(--cream-dim); max-width:540px; line-height:1.5; margin:0; }
-
-  .voyage{ margin-top:44px; position:relative; }
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--steel);margin:0 0 10px;}
+  h1.title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(30px,8vw,52px);line-height:1.02;margin:0 0 8px;letter-spacing:-.01em;}
+  h1.title em{font-style:italic;color:var(--gold);}
+  #tripline{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--gold);letter-spacing:.04em;margin:0;}
+  .voyage{margin-top:18px;max-width:560px;}
   .voyage svg{width:100%;height:auto;display:block;}
-  .voyage-rail{ stroke:var(--line); stroke-width:1.5; fill:none; }
-  .voyage-progress{ stroke:var(--gold-dim); stroke-width:1.5; fill:none; stroke-dasharray:4 4; }
-  .rivet{fill:var(--cream-dim);}
-  .rivet.gold{fill:var(--gold);}
-  .port-label{ font-family:'IBM Plex Mono',monospace; font-size:11px; fill:var(--cream); letter-spacing:0.06em; }
-  .port-sub{ font-family:'IBM Plex Mono',monospace; font-size:9.5px; fill:var(--steel); }
-  .ship-mark{ fill:var(--rust); }
+  .v-rail{stroke:var(--line);stroke-width:1.5;fill:none;}
+  .v-dash{stroke:var(--gold-dim);stroke-width:1.5;fill:none;stroke-dasharray:4 4;}
+  .rivet{fill:var(--cream-dim);} .rivet.gold{fill:var(--gold);}
+  .v-lab{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:var(--cream);letter-spacing:.06em;}
+  .previewbar{background:var(--rust);color:var(--cream);font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:6px 20px;text-align:center;}
 
-  .view-toggle{
-    display:inline-flex; gap:2px; margin-top:30px;
-    border:1px solid var(--line); border-radius:var(--radius); padding:3px;
+  /* ---------- Sticky tabs ---------- */
+  .topbar{position:sticky;top:0;z-index:40;background:rgba(14,38,32,.95);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0;padding-top:max(10px, env(safe-area-inset-top));}
+  .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;border:1px solid var(--line);border-radius:var(--r);padding:3px;}
+  .tabs button{background:transparent;border:none;border-radius:var(--r);min-height:44px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-dim);}
+  .tabs button.active{background:var(--gold);color:var(--ink);font-weight:500;}
+
+  main{padding:0 0 110px;}
+
+  /* ---------- Chips / tags ---------- */
+  .chip{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;padding:4px 8px;border-radius:2px;border:1px solid var(--line);color:var(--cream-dim);white-space:nowrap;}
+  .chip.soon{border-color:rgba(127,160,165,.55);color:var(--steel);}
+  .chip.next{border-color:var(--gold);color:var(--gold);}
+  .chip.live{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:500;}
+  .chip.today{border-color:var(--gold);color:var(--gold);}
+  .chip.done{color:#8b948f;border-color:rgba(242,236,220,.1);}
+  .chip.live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--ink);animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:2px 6px;border-radius:2px;color:var(--cream-dim);border:1px solid var(--line);}
+  .tag.booked{color:var(--gold);border-color:var(--gold-dim);}
+  .tag.idea{border-style:dashed;color:var(--steel);border-color:rgba(127,160,165,.5);}
+  .tag.open{border-style:dashed;}
+
+  /* ---------- BLOCKS VIEW ---------- */
+  .blocks{display:grid;gap:16px;padding:18px 0 0;}
+  .block{
+    position:relative;overflow:hidden;border:1px solid var(--line);border-radius:6px;
+    min-height:420px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;
+    padding:16px;isolation:isolate;
+    transition:filter .3s, opacity .3s;
   }
-  .view-toggle button{
-    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase;
-    background:transparent; color:var(--cream-dim); border:none; padding:8px 16px;
-    border-radius:var(--radius); cursor:pointer; transition:background .15s, color .15s;
-  }
-  .view-toggle button.active{ background:var(--gold); color:var(--ink); }
-  .view-toggle button:not(.active):hover{ color:var(--cream); }
+  .b-photo{position:absolute;inset:0;z-index:-1;background:linear-gradient(155deg,var(--hull-2),var(--ink) 70%);}
+  .b-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.8) contrast(1.06) brightness(.95);}
+  .b-photo::before{content:'';position:absolute;inset:0;background:rgba(20,60,49,.38);mix-blend-mode:multiply;z-index:1;}
+  .b-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,38,32,.55) 0%,rgba(14,38,32,.05) 32%,rgba(14,38,32,.55) 62%,rgba(14,38,32,.94) 100%);z-index:2;}
+  .b-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pill{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:var(--gold);border:1px solid var(--gold-dim);padding:5px 9px;border-radius:2px;background:rgba(14,38,32,.55);}
+  .datebtn{background:rgba(14,38,32,.55);border:1px solid var(--line);border-radius:2px;min-height:44px;padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;color:var(--cream);}
+  .datebtn:hover{border-color:var(--gold-dim);}
+  .b-top .chip{margin-left:auto;background:rgba(14,38,32,.55);}
+  .b-top .chip.live,.b-top .chip.today.fill{background:var(--gold);}
+  .b-main .city{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:6px;}
+  .b-main h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,8vw,40px);line-height:1.04;margin:0;letter-spacing:-.01em;text-shadow:0 2px 14px rgba(0,0,0,.45);}
+  .b-next{background:rgba(14,38,32,.8);border:1px solid rgba(242,236,220,.2);border-radius:4px;padding:12px 14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+  .b-next .lbl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;}
+  .b-next .what{font-family:'Fraunces',serif;font-weight:500;font-size:20px;line-height:1.2;margin:4px 0 2px;}
+  .b-next .when{font-size:14px;color:var(--cream-dim);line-height:1.4;}
+  .more{width:100%;margin-top:10px;min-height:46px;background:transparent;border:1px solid var(--gold);border-radius:3px;color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;}
+  .more:hover{background:rgba(201,162,75,.12);}
+  .block{scroll-margin-top:72px;}
+  .block.today{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);}
+  .block.past{filter:grayscale(1);opacity:.5;}
+  .block.past .more{border-color:var(--line);color:var(--cream-dim);}
 
-  nav.days{ display:flex; gap:6px; overflow-x:auto; padding:0 0 6px; margin-bottom:36px; border-bottom:1px solid var(--line); }
-  nav.days a{
-    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--cream-dim); white-space:nowrap;
-    padding:8px 12px; border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
-    transition:border-color .15s, color .15s;
-  }
-  nav.days a:hover{ border-color:var(--gold-dim); color:var(--cream); text-decoration:none; }
-
-  main{padding:8px 0 100px;}
-
-  section.day{ border-top:1px solid var(--line); padding:46px 0; scroll-margin-top:20px; }
+  /* ---------- ITINERARY VIEW ---------- */
+  section.day{border-top:1px solid var(--line);padding:34px 0;scroll-margin-top:72px;}
   section.day:first-of-type{border-top:none;}
-
-  .day-head{ display:flex; align-items:baseline; gap:18px; margin-bottom:6px; }
-  .day-num{
-    font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--gold); letter-spacing:0.08em;
-    border:1px solid var(--gold-dim); padding:3px 8px; border-radius:var(--radius); flex-shrink:0;
-  }
-  .day-date{ font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--steel); letter-spacing:0.04em; }
-  h2.day-title{
-    font-family:'Fraunces',serif; font-weight:600; font-size:clamp(24px,4vw,34px);
-    margin:8px 0 4px; letter-spacing:-0.01em;
-  }
-  .day-loc{ font-size:14px; color:var(--cream-dim); margin:0 0 22px; }
-
-  .day-banner{
-    width:100%; height:260px; object-fit:cover; border-radius:var(--radius);
-    margin-bottom:24px; filter:saturate(0.92) contrast(1.03); display:block;
-  }
-
-  .stops{ display:grid; gap:0; border-left:1px solid var(--line); padding-left:22px; margin-left:6px; }
-  .stop{
-    position:relative; padding:16px 0; border-bottom:1px solid var(--line);
-    display:flex; gap:16px; align-items:flex-start;
-  }
+  .day-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px;}
+  .day-date{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--steel);letter-spacing:.04em;}
+  .day-head .chip{margin-left:auto;}
+  h2.day-title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(24px,6vw,34px);margin:8px 0 4px;letter-spacing:-.01em;}
+  .day-loc{font-size:14px;color:var(--cream-dim);margin:0 0 18px;}
+  section.day.past{opacity:.5;filter:grayscale(.85);}
+  section.day.today{border-top-color:var(--gold-dim);}
+  .stops{border-left:1px solid var(--line);padding-left:20px;margin-left:5px;}
+  .stop{position:relative;padding:16px 0 16px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start;scroll-margin-top:84px;}
   .stop:last-child{border-bottom:none;}
-  .stop::before{
-    content:''; position:absolute; left:-27px; top:22px;
-    width:7px;height:7px; border-radius:50%; background:var(--gold);
-  }
-  .stop-photo{
-    width:92px; height:92px; object-fit:cover; border-radius:var(--radius);
-    flex-shrink:0; filter:saturate(0.9); background:var(--hull);
-  }
-  .stop-text{min-width:0;}
-  .stop-time{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--steel); letter-spacing:0.04em; }
-  .stop-name{ font-family:'Fraunces',serif; font-weight:500; font-size:18px; margin:2px 0 4px; }
-  .stop-note{ font-size:14.5px; color:var(--cream-dim); line-height:1.5; max-width:560px; }
+  .stop::before{content:'';position:absolute;left:-25px;top:22px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  .stop.idea::before,.stop.open::before{background:transparent;border:1.5px solid var(--steel);}
+  .stop.soon::before{box-shadow:0 0 0 3px rgba(127,160,165,.18);}
+  .stop.done::before{background:#6c7771;border-color:#6c7771;}
+  .stop.live{background:linear-gradient(90deg,rgba(201,162,75,.12),transparent 80%);margin-left:-8px;padding-left:8px;border-radius:3px;}
+  .stop.live::before{left:-17px;box-shadow:0 0 0 4px rgba(201,162,75,.3);}
+  .stop.done .stop-text,.stop.done .stop-photo{opacity:.5;}
+  .stop-photo{width:76px;height:76px;object-fit:cover;border-radius:3px;flex-shrink:0;background:var(--hull);filter:saturate(.9);}
+  .stop.done .stop-photo{filter:grayscale(1);}
+  section.day.past .stop.done .stop-text,section.day.past .stop.done .stop-photo{opacity:1;}
+  .stop-text{min-width:0;flex:1;}
+  .stop-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+  .stop-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--steel);letter-spacing:.04em;}
+  .stop-name{font-family:'Fraunces',serif;font-weight:500;font-size:19px;line-height:1.2;margin:2px 0 4px;}
+  .stop-note{font-size:14.5px;color:var(--cream-dim);line-height:1.5;max-width:580px;}
+  .callout{margin-top:22px;border:1px solid var(--line);border-radius:3px;padding:18px 20px;background:rgba(242,236,220,.03);}
+  .callout .lab{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin:0 0 8px;}
+  .callout p{margin:0;font-size:15px;line-height:1.6;color:var(--cream-dim);max-width:620px;}
+  .nowfab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:50;min-height:48px;padding:0 18px;border-radius:24px;background:var(--gold);color:var(--ink);border:none;font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.45);}
 
-  @media (max-width:560px){
-    .stop-photo{width:64px;height:64px;}
-    .stop-name{font-size:16px;}
-  }
-
-  section.day.featured{
-    background: linear-gradient(180deg, rgba(165,98,63,0.07), transparent 30%), transparent;
-    border-top:1px solid var(--gold-dim); border-bottom:1px solid var(--gold-dim);
-  }
-  section.day.featured .day-num{ background:var(--rust); color:var(--cream); border-color:var(--rust); }
-  .blueprint{
-    margin-top:26px; border:1px solid var(--line); border-radius:var(--radius);
-    padding:22px 24px; background:rgba(242,236,220,0.03);
-  }
-  .blueprint-label{
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em;
-    text-transform:uppercase; color:var(--rust); margin:0 0 10px;
-  }
-  .blueprint p{ margin:0; font-size:15px; line-height:1.65; color:var(--cream-dim); max-width:640px; }
-  .blueprint p + p{margin-top:12px;}
-
-  details.logistics{ margin-top:18px; }
-  details.logistics summary{
-    cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:11.5px;
-    letter-spacing:0.06em; color:var(--steel); list-style:none; padding:4px 0;
-  }
-  details.logistics summary::-webkit-details-marker{display:none;}
-  details.logistics summary::before{ content:'+ '; color:var(--gold); }
-  details.logistics[open] summary::before{content:'– ';}
-  details.logistics .content{ padding:10px 0 0 14px; font-size:14px; color:var(--cream-dim); line-height:1.6; }
-
-  section.map-view{
-    border-bottom:1px solid var(--line);
-    padding-top:28px;
-    background:var(--ink);
-  }
-  .map-view-head{ padding-bottom:16px; }
-  .map-legend{
-    display:flex; flex-wrap:wrap; gap:18px; margin-bottom:16px;
-    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--cream-dim);
-  }
-  .map-legend span{display:inline-flex;align-items:center;gap:7px;}
-  .map-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
-  .map-days{ display:flex; flex-wrap:wrap; gap:6px; }
-  .map-days button{
-    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.04em;
-    color:var(--cream-dim); background:transparent; border:1px solid var(--line);
-    border-radius:var(--radius); padding:8px 14px; cursor:pointer; white-space:nowrap;
-    transition:border-color .15s, color .15s, background .15s;
-  }
-  .map-days button:hover{ border-color:var(--gold-dim); color:var(--cream); }
-  .map-days button.active{ background:var(--gold); color:var(--ink); border-color:var(--gold); }
-  #leaflet-map{
-    width:100%; height:70vh; min-height:440px; max-height:680px;
-    display:block; border-top:1px solid var(--line);
-  }
-  .leaflet-popup-content-wrapper{ background:var(--hull); color:var(--cream); border-radius:var(--radius); }
+  /* ---------- MAP VIEW ---------- */
+  #map-view{padding:16px 0 0;}
+  .mapchips{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;}
+  .mapchips button{flex:0 0 auto;min-height:44px;padding:0 12px;background:transparent;border:1px solid var(--line);border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--cream-dim);white-space:nowrap;}
+  .mapchips button.active{background:var(--gold);color:var(--ink);border-color:var(--gold);}
+  .mapchips button.past{opacity:.5;}
+  #map-title{font-family:'Fraunces',serif;font-size:20px;margin:10px 0 2px;}
+  #map-meta{font-size:13.5px;color:var(--cream-dim);min-height:20px;margin-bottom:10px;}
+  #leaflet-map{width:100%;height:58vh;min-height:360px;border-radius:4px;border:1px solid var(--line);background:var(--hull);}
+  .map-msg{padding:24px;color:var(--cream-dim);font-size:14px;}
+  #map-list{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px;}
+  #map-list li{display:flex;gap:12px;align-items:baseline;font-size:14.5px;color:var(--cream-dim);}
+  #map-list .num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold);min-width:20px;}
+  #map-list .tm{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--steel);}
+  .leaflet-popup-content-wrapper{background:var(--hull);color:var(--cream);border-radius:3px;}
   .leaflet-popup-tip{background:var(--hull);}
-  .popup-photo{ width:100%; height:110px; object-fit:cover; border-radius:var(--radius); margin-bottom:8px; }
-  .popup-name{ font-family:'Fraunces',serif; font-size:16px; margin:0 0 3px; }
-  .popup-day{
-    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.06em;
-    color:var(--gold); text-transform:uppercase;
-  }
-  .popup-note{ font-size:13px; color:var(--cream-dim); line-height:1.4; margin-top:4px; }
+  .pop-photo{width:100%;height:100px;object-fit:cover;border-radius:2px;margin-bottom:6px;}
+  .pop-name{font-family:'Fraunces',serif;font-size:16px;}
+  .pop-time{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;}
+  .pin{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace;color:var(--ink);border:2px solid var(--ink);box-shadow:0 0 0 1px rgba(242,236,220,.4);}
 
-  footer{ border-top:1px solid var(--line); padding:36px 0 60px; }
-  footer .foot-title{ font-family:'Fraunces',serif; font-size:20px; margin:0 0 8px; color:var(--gold); }
-  footer p{ font-size:14px; color:var(--cream-dim); max-width:520px; line-height:1.6; margin:0; }
+  footer{border-top:1px solid var(--line);padding:30px 0 60px;}
+  footer p{font-size:13.5px;color:var(--cream-dim);line-height:1.6;max-width:560px;margin:0 0 8px;}
+  footer .foot-title{font-family:'Fraunces',serif;font-size:19px;color:var(--gold);}
 
-  @media (max-width:600px){
-    .day-head{flex-wrap:wrap;}
-    .stops{padding-left:16px;margin-left:2px;}
-    .stop::before{left:-21px;}
-    #leaflet-map{height:60vh; min-height:360px;}
+  @media (min-width:700px){
+    .blocks{grid-template-columns:1fr 1fr;}
+    .block{min-height:460px;}
   }
 </style>
 </head>
 <body>
 
+<div id="previewbar" class="previewbar hidden"></div>
+
 <header class="hero">
   <div class="wrap">
-    <p class="eyebrow">Erik &amp; Steph · Oct 8–17, 2026</p>
-    <h1 class="title">London, then west<br>to <em>Ireland</em>.</h1>
-    <p class="sub">Ten days — an NFL Sunday at Tottenham Hotspur Stadium, three nights in Dublin, one voyage north to the Causeway coast and where the Titanic was built, then home.</p>
-
-    <div class="view-toggle" role="group" aria-label="Jump to section">
-      <button id="btn-map" type="button">Map</button>
-      <button id="btn-itinerary" type="button">Itinerary</button>
+    <p class="eyebrow">Erik &amp; guest · Oct 8–17, 2026</p>
+    <h1 class="title">London, Dublin,<br>and north to <em>Belfast</em>.</h1>
+    <p id="tripline"></p>
+    <div class="voyage" aria-hidden="true">
+      <svg viewBox="0 0 880 110" preserveAspectRatio="xMidYMid meet">
+        <path class="v-rail" d="M40,70 C 160,70 160,70 230,70 C 330,70 330,70 420,70 C 520,70 520,24 620,24 C 720,24 720,70 800,70 C 830,70 830,70 842,70"/>
+        <path class="v-dash" d="M40,70 C 160,70 160,70 230,70 C 330,70 330,70 420,70 C 520,70 520,24 620,24 C 720,24 720,70 800,70 C 830,70 830,70 842,70"/>
+        <circle class="rivet gold" cx="40" cy="70" r="5"/><text class="v-lab" x="40" y="94" text-anchor="middle">LONDON</text>
+        <circle class="rivet gold" cx="420" cy="70" r="5"/><text class="v-lab" x="420" y="94" text-anchor="middle">DUBLIN</text>
+        <circle class="rivet gold" cx="620" cy="24" r="5"/><text class="v-lab" x="620" y="14" text-anchor="middle">BELFAST</text>
+        <circle class="rivet" cx="800" cy="70" r="4"/><text class="v-lab" x="800" y="94" text-anchor="middle">CAUSEWAY</text>
+      </svg>
     </div>
   </div>
 </header>
 
-<section class="map-view" id="map-view">
-  <div class="wrap map-view-head">
-    <div class="map-legend">
-      <span><span class="dot" style="background:#6E85A6"></span>London (Days 1–4)</span>
-      <span><span class="dot" style="background:#C9A24B"></span>Dublin (Days 5–7, 10)</span>
-      <span><span class="dot" style="background:#A5623F"></span>Belfast (Days 8–9)</span>
-      <span><span class="dot" style="background:#7FA0A5"></span>Causeway (Day 8)</span>
+<div class="topbar">
+  <div class="wrap">
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button id="tab-blocks" role="tab" class="active" aria-selected="true">Days</button>
+      <button id="tab-itinerary" role="tab" aria-selected="false">Itinerary</button>
+      <button id="tab-map" role="tab" aria-selected="false">Map</button>
     </div>
-    <div class="map-days" id="map-day-tabs" role="tablist" aria-label="Trip leg or day"></div>
   </div>
-  <div id="leaflet-map"></div>
-</section>
+</div>
 
 <main class="wrap">
-
-<div id="itinerary-view">
-
-  <nav class="days" id="day-nav">
-    <a href="#day1">Day 1 · Depart</a>
-    <a href="#day2">Day 2 · London</a>
-    <a href="#day3">Day 3 · London</a>
-    <a href="#day4">Day 4 · Eagles/Jaguars</a>
-    <a href="#day5">Day 5 · Arrival, Dublin</a>
-    <a href="#day6">Day 6 · Guinness</a>
-    <a href="#day7">Day 7 · Dublin</a>
-    <a href="#day8">Day 8 · Causeway</a>
-    <a href="#day9">Day 9 · Titanic Belfast</a>
-    <a href="#day10">Day 10 · Home</a>
-  </nav>
-
-  <section class="day" id="day1">
-    <div class="day-head"><span class="day-num">DAY 1</span><span class="day-date">Thu, Oct 8</span></div>
-    <h2 class="day-title">Wheels up for London</h2>
-    <p class="day-loc">Philadelphia → Boston → London</p>
-    <div class="stops">
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">8:15 PM</div>
-          <div class="stop-name">Depart Philadelphia</div>
-          <div class="stop-note">AA1874 to Boston, connecting to AA108 overnight to London Heathrow — try to get some sleep, it's a long one.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="day" id="day2">
-    <div class="day-head"><span class="day-num">DAY 2</span><span class="day-date">Fri, Oct 9</span></div>
-    <h2 class="day-title">Touch down, ease into London</h2>
-    <p class="day-loc">Heathrow → Borough Market → Tower Bridge</p>
-    <div class="stops">
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">~7:50 AM</div>
-          <div class="stop-name">Land in London</div>
-          <div class="stop-note">AA108 lands at Heathrow — off the overnight flight, keep today light.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Midday</div>
-          <div class="stop-name">Check in</div>
-          <div class="stop-note">Hyde and Seek Hotel — staying here through Oct 12.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Afternoon</div>
-          <div class="stop-name">Borough Market</div>
-          <div class="stop-note">Historic food market by London Bridge — a good low-key way to fight jet lag, no reservations needed.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Evening</div>
-          <div class="stop-name">Tower Bridge &amp; the South Bank</div>
-          <div class="stop-note">An easy walk along the Thames past Tower Bridge and City Hall, then dinner nearby.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="day" id="day3">
-    <div class="day-head"><span class="day-num">DAY 3</span><span class="day-date">Sat, Oct 10</span></div>
-    <h2 class="day-title">A full day in London</h2>
-    <p class="day-loc">British Museum → Covent Garden → Westminster</p>
-    <div class="stops">
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">9:00 AM</div>
-          <div class="stop-name">British Museum</div>
-          <div class="stop-note">Free entry — the Rosetta Stone and the Parthenon sculptures. Go early, before the tour groups.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Midday</div>
-          <div class="stop-name">Covent Garden</div>
-          <div class="stop-note">Lunch, shopping, and street performers in the piazza.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Afternoon</div>
-          <div class="stop-name">Westminster &amp; Big Ben</div>
-          <div class="stop-note">Past Parliament and Westminster Abbey, then across the bridge for the classic view back at the Houses of Parliament.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Evening</div>
-          <div class="stop-name">Dinner in Soho</div>
-          <div class="stop-note">An early dinner and an early night — game day tomorrow.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="day featured" id="day4">
-    <div class="day-head"><span class="day-num">DAY 4</span><span class="day-date">Sun, Oct 11</span></div>
-    <h2 class="day-title">Eagles vs. Jaguars, Tottenham Hotspur Stadium</h2>
-    <p class="day-loc">Hotel → Tottenham Hotspur Stadium</p>
-
-    <div class="stops">
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Morning</div>
-          <div class="stop-name">Slow start</div>
-          <div class="stop-note">Breakfast, then the Underground north to Tottenham.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">2:30 PM</div>
-          <div class="stop-name">Eagles vs. Jaguars</div>
-          <div class="stop-note">NFL London Games — Philadelphia Eagles vs. Jacksonville Jaguars, kickoff 2:30 PM local (9:30 AM ET), airing on NFL Network. Get in early for the pregame atmosphere.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Evening</div>
-          <div class="stop-name">Postgame</div>
-          <div class="stop-note">Dinner back in central London — trains and the Underground get busy right after the final whistle.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="blueprint">
-      <p class="blueprint-label">Why this day made the trip</p>
-      <p>The Eagles play one home-away NFL London Game a season, and 2026 sends them to Tottenham Hotspur Stadium against Jacksonville — a rare chance to see the defending champs on the road, in a soccer stadium retrofitted for American football.</p>
-      <p>Kickoff is 2:30 PM local (9:30 AM ET), broadcast on NFL Network back home.</p>
-    </div>
-  </section>
-
-  <section class="day" id="day5">
-    <div class="day-head"><span class="day-num">DAY 5</span><span class="day-date">Mon, Oct 12</span></div>
-    <h2 class="day-title">Arrival, Dublin</h2>
-    <p class="day-loc">London → Dublin Airport → The Alex Hotel</p>
-    <div class="stops">
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Dublin_Airport_Terminal_1_-_2024-05-18_01.jpg" alt="Dublin Airport">
-        <div class="stop-text">
-          <div class="stop-time">Morning</div>
-          <div class="stop-name">Land in Dublin</div>
-          <div class="stop-note">Flight from London, 12:00 PM–1:30 PM. Short hop over — straight into the city.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Afternoon</div>
-          <div class="stop-name">Check in, walk it off</div>
-          <div class="stop-note">The Alex Hotel, Fenian Street, then a loop over the Ha'penny Bridge and along the Liffey.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjB78qiyjHfl3YfoMS_ajkXRE6oQavWYj6N4WJRLp69s_qATSSScDKZpkefCItfMCme5PXoSHX7SyJnIgwPQ9Dxsdn6tKRJPY7ELwAOc9U5DycQVnNtljzahRxdlCpSA9DFh0tFahuIQkUG2bQ=s400" alt="Fish Shop, Stoneybatter">
-        <div class="stop-text">
-          <div class="stop-time">Evening</div>
-          <div class="stop-name">Fish Shop, Stoneybatter</div>
-          <div class="stop-note">Small, no reservations, some of the best fish &amp; chips in the city.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Night</div>
-          <div class="stop-name">Temple Bar</div>
-          <div class="stop-note">Loud, touristy, and worth it at least once — live music spilling out of every doorway.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://lh3.googleusercontent.com/place-photos/AG9NLjDjhxwUEO-IED_PqpJEwT0J7T5j1E--wBXOlrCwVw137jk8QfcF5EA-iPipoM50y4GZowtIHJpvU6_Vea2ljWlcc9jn0IpiDXSQAH5TnWZJ6JrWdxfKXcr5NpXGQISTmTEny5llNMoAhShDR9GP3rakKA=s400" alt="O'Donoghue's Bar">
-        <div class="stop-text">
-          <div class="stop-time">Night</div>
-          <div class="stop-name">O'Donoghue's, Baggot St</div>
-          <div class="stop-note">The pub where The Dubliners got their start. Real, unpolished, nightly sessions.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="day" id="day6">
-    <div class="day-head"><span class="day-num">DAY 6</span><span class="day-date">Tue, Oct 13</span></div>
-    <h2 class="day-title">Guinness, and a different Dublin</h2>
-    <p class="day-loc">Phoenix Park → Guinness Storehouse → Marsh's Library</p>
-    <div class="stops">
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Phoenix_Park_Dublin_16.JPG" alt="Phoenix Park">
-        <div class="stop-text">
-          <div class="stop-time">9:00 AM</div>
-          <div class="stop-name">Phoenix Park</div>
-          <div class="stop-note">Europe's largest enclosed city park — the wild deer herd and Wellington Monument, free and gorgeous.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Guinness_Storehouse.JPG" alt="Guinness Storehouse">
-        <div class="stop-text">
-          <div class="stop-time">11:00 AM</div>
-          <div class="stop-name">Guinness Storehouse</div>
-          <div class="stop-note">Already booked. Finish at the Gravity Bar for the free pint and the 360° view.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Marsh's_Library_-_panoramio.jpg" alt="Marsh's Library">
-        <div class="stop-text">
-          <div class="stop-time">Afternoon</div>
-          <div class="stop-name">Marsh's Library + Kilmainham Gaol</div>
-          <div class="stop-note">Ireland's oldest public library, 1707 — almost nobody visits it. Kilmainham after, if it fits (book ahead, it sells out).</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/The_Iveagh_Gardens_-_Streets_Of_Dublin.jpg" alt="Iveagh Gardens">
-        <div class="stop-text">
-          <div class="stop-time">Evening</div>
-          <div class="stop-name">Iveagh Gardens, then dinner at Vintage Kitchen</div>
-          <div class="stop-note">A walled Victorian garden most visitors never find. Dinner reservation at Vintage Kitchen, 6:00 PM.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="day" id="day7">
-    <div class="day-head"><span class="day-num">DAY 7</span><span class="day-date">Wed, Oct 14</span></div>
-    <h2 class="day-title">A second day in Dublin</h2>
-    <p class="day-loc">Grand Canal Dock → EPIC Museum → Jameson Bow St</p>
-    <div class="stops">
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Buildings_at_Grand_Canal_Dock,_Dublin_20150809_1.jpg" alt="Grand Canal Dock">
-        <div class="stop-text">
-          <div class="stop-time">Morning</div>
-          <div class="stop-name">Grand Canal Dock</div>
-          <div class="stop-note">Sleep in, then walk the canal — quiet, modern, almost no tourists.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Entrance_to_EPIC_The_Irish_Emigration_Museum.jpg" alt="EPIC The Irish Emigration Museum">
-        <div class="stop-text">
-          <div class="stop-time">Late morning</div>
-          <div class="stop-name">EPIC — The Irish Emigration Museum</div>
-          <div class="stop-note">Interactive, consistently one of Dublin's best-reviewed museums, rarely crowded.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Dublin_-_Old_Jameson_Distillery_-_20210918161608.jpg" alt="Jameson Distillery Bow St">
-        <div class="stop-text">
-          <div class="stop-time">Afternoon</div>
-          <div class="stop-name">Jameson Distillery Bow St</div>
-          <div class="stop-note">A proper whiskey tasting at the original distillery site.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Evening</div>
-          <div class="stop-name">Dinner at WILDE</div>
-          <div class="stop-note">Reservation at 6:30 PM.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Night</div>
-          <div class="stop-name">Vintage Cocktail Club</div>
-          <div class="stop-note">After-dinner drinks.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="day" id="day8">
-    <div class="day-head"><span class="day-num">DAY 8</span><span class="day-date">Thu, Oct 15</span></div>
-    <h2 class="day-title">Belfast, then the Causeway coast</h2>
-    <p class="day-loc">Dublin → Belfast → Giant's Causeway → Belfast</p>
-
-    <div class="stops">
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">8:00 AM</div>
-          <div class="stop-name">Depart Dublin</div>
-          <div class="stop-note">Mostly motorway to Belfast, ~2 hrs via the M1. Crosses into Northern Ireland — no border stop, but bring a passport.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Cathedral_St._Anne_Belfast.jpg" alt="Cathedral Quarter, Belfast">
-        <div class="stop-text">
-          <div class="stop-time">~10:00 AM</div>
-          <div class="stop-name">Check in, Cathedral Quarter</div>
-          <div class="stop-note">Drop bags at the hotel before continuing north — no need to unpack yet.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Giant's_Causeway_(14).JPG" alt="Giant's Causeway">
-        <div class="stop-text">
-          <div class="stop-time">Midday</div>
-          <div class="stop-name">Giant's Causeway</div>
-          <div class="stop-note">A day trip north from Belfast, ~1–1.25 hrs each way — the basalt columns, one of the best natural sights in either country.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Cathedral_St._Anne_Belfast.jpg" alt="Cathedral Quarter, Belfast">
-        <div class="stop-text">
-          <div class="stop-time">Evening</div>
-          <div class="stop-name">Back to the Cathedral Quarter</div>
-          <div class="stop-note">Dinner, then The Duke of York or The Dirty Onion for live music. Overnight in Belfast.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="day featured" id="day9">
-    <div class="day-head"><span class="day-num">DAY 9</span><span class="day-date">Fri, Oct 16</span></div>
-    <h2 class="day-title">The Titanic, then home to Dublin</h2>
-    <p class="day-loc">Belfast → Titanic Belfast → Dublin</p>
-
-    <img class="day-banner" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Titanic_Belfast_side_view.jpg" alt="Titanic Belfast, on the original shipyard slipways">
-
-    <div class="stops">
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Cathedral_St._Anne_Belfast.jpg" alt="Depart Belfast">
-        <div class="stop-text">
-          <div class="stop-time">8:30 AM</div>
-          <div class="stop-name">Depart Belfast</div>
-          <div class="stop-note">Quick breakfast, then straight to the shipyard.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Belfast_Titanic.jpg" alt="Titanic Belfast interior">
-        <div class="stop-text">
-          <div class="stop-time">~9:00 AM</div>
-          <div class="stop-name">Titanic Belfast</div>
-          <div class="stop-note">Built on the actual shipyard slipways where the ship was laid down and launched. Budget 2.5–3 hours.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Afternoon</div>
-          <div class="stop-name">Straight back to Dublin</div>
-          <div class="stop-note">~2 hrs via the M1, no detours. More time to rest before the last night.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="blueprint">
-      <p class="blueprint-label">Why this is the day the trip is built around</p>
-      <p>Titanic was designed, built, and launched at the Harland &amp; Wolff yard here — the museum sits directly on that slipway, not a replica site elsewhere. It's rated among the best museums in Ireland or the UK, and the scale of the thing is hard to get from photos.</p>
-      <p>Book the SS Nomadic add-on if there's time — it's the last surviving White Star Line vessel, and it's included in the ticket.</p>
-    </div>
-
-    <details class="logistics">
-      <summary>Logistics</summary>
-      <div class="content">
-        Currency switches to GBP once you cross into Northern Ireland. No formal border checkpoint, but carry a passport. Book Titanic Belfast tickets ahead for a fixed entry slot — it does sell out on busy days.
-      </div>
-    </details>
-  </section>
-
-  <section class="day" id="day10">
-    <div class="day-head"><span class="day-num">DAY 10</span><span class="day-date">Sat, Oct 17</span></div>
-    <h2 class="day-title">Departure</h2>
-    <p class="day-loc">Dublin → Philadelphia</p>
-    <div class="stops">
-      <div class="stop">
-        <div class="stop-text">
-          <div class="stop-time">Early morning</div>
-          <div class="stop-name">Easy start</div>
-          <div class="stop-note">Pack up quickly, breakfast near The Alex — early flight today.</div>
-        </div>
-      </div>
-      <div class="stop">
-        <img class="stop-photo" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Dublin_Airport_Terminal_1_-_2024-05-18_01.jpg" alt="Dublin Airport">
-        <div class="stop-text">
-          <div class="stop-time">9:30 AM</div>
-          <div class="stop-name">Flight home</div>
-          <div class="stop-note">Dublin → Philadelphia, direct, AA723 — arrives ~11:50 AM.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</div><!-- /#itinerary-view -->
-
+  <div id="blocks-view"><div class="blocks" id="blocks"></div></div>
+  <div id="itinerary-view" class="hidden"><div id="itinerary"></div></div>
+  <div id="map-view" class="hidden">
+    <div class="mapchips" id="mapchips"></div>
+    <h3 id="map-title"></h3>
+    <div id="map-meta"></div>
+    <div id="leaflet-map"></div>
+    <ol id="map-list"></ol>
+  </div>
 </main>
+
+<button id="nowfab" class="nowfab hidden" aria-label="Jump to what's happening now">Now ↓</button>
 
 <footer class="wrap">
   <p class="foot-title">Built around one thing: the shipyard.</p>
-  <p>Two centers of interest, one long drive each way. Everything else is scaffolding around Friday.</p>
+  <p>Flight times marked with ~ come from public schedules, not your tickets. Check the airline apps. Items tagged IDEA are suggestions, not bookings.</p>
 </footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  var btnItin = document.getElementById('btn-itinerary');
-  var btnMap = document.getElementById('btn-map');
-  var mapSection = document.getElementById('map-view');
+(function(){
+  var EU = '+01:00', EDT = '-04:00';
+  var PH = {"dublinAirport": "https://lh3.googleusercontent.com/place-photos/AG9NLjBwBby53xHLwWzo03HtUGbAUc5CFQe8toV5GECgpf0TniMtfBu0QkTXuaKLsLrevZwPq95PGxCSrk0AiGB-tHhcM8jNu_N91uGl5E8d2LexrHao1va6YtTnN6YXXgNflu__JcUCP0ZUtg48Frw=s300", "morrison": "https://lh3.googleusercontent.com/place-photos/AG9NLjCGAcXZ1csromnRzyltmG8JTXK-RW6SqrmgbZpswvjhgFN9X_GZluMOtfU1UTmM43jGDRGkSMnGPRsJ88lHx7ZXzohrCOGECkKd_TimWnOdcdTMr6UEg39C_J4uYpN8BCHdROD7_Gw_CJulyA=s300", "fishShop": "https://lh3.googleusercontent.com/place-photos/AG9NLjB78qiyjHfl3YfoMS_ajkXRE6oQavWYj6N4WJRLp69s_qATSSScDKZpkefCItfMCme5PXoSHX7SyJnIgwPQ9Dxsdn6tKRJPY7ELwAOc9U5DycQVnNtljzahRxdlCpSA9DFh0tFahuIQkUG2bQ=s300", "odonoghues": "https://lh3.googleusercontent.com/place-photos/AG9NLjDjhxwUEO-IED_PqpJEwT0J7T5j1E--wBXOlrCwVw137jk8QfcF5EA-iPipoM50y4GZowtIHJpvU6_Vea2ljWlcc9jn0IpiDXSQAH5TnWZJ6JrWdxfKXcr5NpXGQISTmTEny5llNMoAhShDR9GP3rakKA=s300", "phoenix": "https://lh3.googleusercontent.com/place-photos/AG9NLjDz1MpzweaHuK422Umyp1qM4bNM2m0-Zb50rmVI75R0-CSBDjvA4QT2cx2ZMtLlE1t5WmKALE-gJTEvlntHrlbA1PfjjEewVNvvwuD7rkUcBcCJvRgDHDNrK22EkBANqWTufXX4IUoMeP43KQ=s300", "guinness": "https://lh3.googleusercontent.com/place-photos/AG9NLjCKnC_izut-45pkWG_qp7YC94zsrw0a4vNaFoqlk6fuhpDpLeYBR0srRtk56IeBFqJKiWASmdSx_M2DVCVZXrf6dr_TZD6BCypr0TuX3Koy9JHLbOrq2B0EpVP7N0wteOxH6uA_ADPDvoafTH0=s300", "kilmainham": "https://lh3.googleusercontent.com/place-photos/AG9NLjAbndGSZos218J4hvpgMVx73cmeE3wWS8TTdPuES7u71q1qTuEObEUVW4xteueXSLn4cP_PL2Qyp4oZMSXdgSGsOqCf0kOnogAHLfAFgRIVyqD3_48Si6-UMwjFIbHVabb-Qiu6K7G6rKY6IHplwo6G=s300", "grandCanal": "https://lh3.googleusercontent.com/place-photos/AG9NLjBNny54KjwScqgKrs3BUV4OyQlWPdhNhOfnVN7GRn2tI1b-UuGjGjrOlg_4Tzgak7Gl5TpVMeDCrtPGLiEkxg_B0xjLd0HQ3hSkaimCw-WdU3cDFU1nTe5mLEJw8cUjj8hlq9ZE10R5abcq9A=s300", "epic": "https://lh3.googleusercontent.com/place-photos/AG9NLjDesKlcs8B48WhRHeNcWq4OwE1DfNz34r-yXPHw5mYPHAnlqXycQdNqUMBtaFUplMBSZh9Gwiyae-gmes1cqcoPJX48RFv1BcAJFfnmYg3FUlhvs2RyHJaJZQpPnI6XfjI4DcMX4CW5C8RxxI0=s300", "jameson": "https://lh3.googleusercontent.com/place-photos/AG9NLjBZgcXYah0cl38sEw57YCQrCQFpEgd5a28bko7RK_5_Dg5GGAkuJZaMTfvXJjUqMjcG82eJtQukAohUvDvkV_RjJHadcmkHRLsA077D-1_LPb9g53lTXo99p3LRCp2tItrC4LggjLMACVLDo8C-GobEgA=s300", "titanic": "https://lh3.googleusercontent.com/place-photos/AG9NLjB_y-eC4Kop57XdZuWoT7JtOU1KXzQniDZxAr-CisShJ8uPJ9qaGgLDi0zM9nlUOQurxkQUP7DmL-uH3IemBNfS_Jf_njXqDD8GYa4unpLIeRrxHU9_YUom3uH2qlCHyQ6uWJiLQpZKTulk=s1200", "cathedralQ": "https://lh3.googleusercontent.com/place-photos/AG9NLjDSUZBnR3KNezQplH0f4OP7z9ubXpN1P8EIyIMZAVGGBdrDdXaSjKEMBtJYvKqtSeUh6o00mqQs1622CUYECIO7dpE5y4YyOtVCIKMuRa5ZBPSxi0p_M8D0JkdKA_Op9OUmB9NPI0rbc1fFbE8=s300", "causeway": "https://lh3.googleusercontent.com/place-photos/AG9NLjA9K5O6spY8lE1caVxQ2F-SWSsDJw4h7Ct84D_BkibdHY32MT4zIz-dS_OaPezvyxdbObl6-XkS6_U3V1VdBZ9Dn2cwU5gwr0ureb7ktalbW9PwFYSqoqzDyHYVjB1ggvxYlORkQVYCoge0tkE=s300", "portobello": "https://lh3.googleusercontent.com/grass-cs/AABkmLdxUTzYIOL41Tp3BSmzmr6Oqn5xhBppQxjhT34AbeUvnQxVhQU_9YSdBxo15ErC7zovo8tjR3wm3hJgsK6huFuED9h-1swojvC_FeKCsKdBbADz90-gSn7TNNl_YbPI11C7P0pVhFY7d9Nt=s4800-w800-h600", "spurs": "https://lh3.googleusercontent.com/grass-cs/AABkmLcAhRx4EiX4-proUnZbsYEuPP5hBYRM5PiRs8XL3ks1eSQI1P_gYDio4LK-RUftZEft416H0EaZCSQ3Cco4T8QKlN_Hm0AIsSaPDXzToaIG3TaqkxDFQg__qVhnlC3vuqLV0463dA=s4800-w800-h600", "george": "https://lh3.googleusercontent.com/grass-cs/AABkmLdlouOfmYPGwLStuJ3mpcv847i_hFIociySqdRT5CNrbsp-MwYC7t7kRThNf1GZQZSfm5hiF8gP5Hk7PqTXWpEVBXexACe7JnvLOmCP2LYByAVGrmqXe0bmf3LESJPFvbnH7aRInyQVX0Cc=s4800-w800-h600", "vintage": "https://lh3.googleusercontent.com/grass-cs/AABkmLdBWVT-BlhMfBWTbsptIWOxOVT8-SbA1g17p40v9EQ4RwIAyj8N_JnvErQq7R5fGL5lEZ0mtUI5hVMim1MujZ4_Ss1XowbJy4jQI4fpojyN0qwARwXCqoYTPo29fKeZCC7ltrZEuNbnbLNV=s4800-w800-h600", "littleVenice": "https://lh3.googleusercontent.com/grass-cs/AABkmLdjoY9QTHkOyfrcR6mehd03YgKIvzbTJ4pqhSus_JVEnBht66aXMpcZDI8S6C-P5awKfrmJFQKso-x2nVQ9VGpLEn9TujXfFnmlBF9-fBDbhHBEwFBYJACVeBq2ovyrXir0-tEj4woHB-Wu=s4800-w800-h600", "towerBridge": "https://lh3.googleusercontent.com/grass-cs/AABkmLcikvUoA6p-yWeQB7PKkEUrtkNGr8SmSnT_K-Tpc7MxOtYDnjqe-V3R95HmCDCG27Hccr9J_caDoduhgS8yRaRkXKvLcqzM4XPOi_Z_x5QOBxWpeEur6owqFaA3qjigyoAaMd-i=s4800-w800-h600", "borough": "https://lh3.googleusercontent.com/grass-cs/AABkmLdBYk_6XbSXv4eL838RckkwAB46UMUq9vocoN0nR2gw89D8o5HPrV3C5NuIIp6oBGwehA9ti5fzrl2QGf4LQ_5dByj0znB7lioUEQav3veBo1JLunAdrYdBH5C8jJ4yhuxwVaQq=s4800-w800-h600", "maddens": "https://lh3.googleusercontent.com/grass-cs/ACvplmOHl71fS0RVRglmUMM6Rd4ocNr0dON57usITUKHo2KpYUBdQC1_3jaIcir7ZMsH4CW2JFbQLfe4aEYoOKTm6AegNFclLoH3uC3NZLKXCp7kN88JsC6wv86S8lUL_z3yJ1XICIMI=s4800-w800-h600", "heathrow": "https://lh3.googleusercontent.com/grass-cs/AABkmLeQuwWQ7XVRBZ9jvqNeOuRilmJLV6Q3DJk8c-V-ekoJhvfd-Xc_qDIjPYDIMk4vl1tKub9POPxoZOBUcIhcxLgWu-wwEkfm4GdREo-jActx4qZ_7pUvRUEnybpKWcapbVi7jT3TDGyN7xW6=s4800-w800-h600", "cobblestone": "https://lh3.googleusercontent.com/grass-cs/AABkmLcYFuXddmi51liYzD4oITcf5bRJNYBk0Ezpx6GyBv8DKroPTPlCD4JOSEXuUHeBZ3zp3P_PniM_1_3om0tV0_nYFeNItKTXe8nXzH9OKA8lB7VRvFdt0OGwJutO6LFpJPtPs_G0MKrUeN-u=s4800-w800-h600", "hydeSeek": "https://lh3.googleusercontent.com/grass-cs/AABkmLdt7DeIjYpQ8g8F_0cVkfJnxeNaYn_35pXZX1Rbm1oDnNcLYRkSUC3-j0-pO0lzrv4-hhjrLtHHwdS-Iah6zIHNJBCawz5x4FUjniJT9JWZSrFkPdtzB-zXO-gSRsADmr1iew_ZpWM3-t1t=s4800-w800-h600"};
 
-  // Trip runs Thu Oct 8 (day 1) through Sat Oct 17, 2026 (day 10).
-  var TRIP_START = new Date(2026, 9, 8);
-  var TRIP_END = new Date(2026, 9, 17);
+  var LOC = {
+    heathrow:{n:'Heathrow Airport',lat:51.4679903,lng:-0.4550471},
+    hydeSeek:{n:'Hyde & Seek',lat:51.5116966,lng:-0.1774143},
+    portobello:{n:'Portobello Rd Distillery',lat:51.5147971,lng:-0.2045532},
+    littleVenice:{n:'Little Venice',lat:51.5211994,lng:-0.1827805},
+    borough:{n:'Borough Market',lat:51.5055826,lng:-0.0904808},
+    george:{n:'The George Inn',lat:51.5042925,lng:-0.0904364},
+    towerBridge:{n:'Tower Bridge',lat:51.5054564,lng:-0.0753565},
+    spurs:{n:'Tottenham Hotspur Stadium',lat:51.6042536,lng:-0.0662083},
+    morrison:{n:'The Morrison Dublin',lat:53.3466514,lng:-6.2659595},
+    dublinAirport:{n:'Dublin Airport',lat:53.425632,lng:-6.2573755},
+    fishShop:{n:'Fish Shop, Stoneybatter',lat:53.3472611,lng:-6.2819629},
+    odonoghues:{n:"O'Donoghue's",lat:53.3382083,lng:-6.2542292},
+    phoenix:{n:'Phoenix Park',lat:53.3558823,lng:-6.3298133},
+    guinness:{n:'Guinness Storehouse',lat:53.3418088,lng:-6.2867156},
+    barnardo:{n:'Barnardo Square, Dame St',lat:53.3432,lng:-6.2670},
+    cobblestone:{n:'The Cobblestone',lat:53.3498083,lng:-6.2778361},
+    grandCanal:{n:'Grand Canal Dock',lat:53.34418,lng:-6.2408446},
+    epic:{n:'EPIC Irish Emigration Museum',lat:53.3483124,lng:-6.2481792},
+    jameson:{n:'Jameson Distillery Bow St',lat:53.3481851,lng:-6.2770289},
+    causeway:{n:"Giant's Causeway",lat:55.2408073,lng:-6.5115554},
+    cathedralQ:{n:'Cathedral Quarter, Belfast',lat:54.6022751,lng:-5.9290968},
+    maddens:{n:"Madden's Bar",lat:54.600101,lng:-5.9337168},
+    titanic:{n:'Titanic Belfast',lat:54.6081106,lng:-5.9099511},
+    vintage:{n:'The Vintage Kitchen',lat:53.3469072,lng:-6.2556946}
+  };
 
-  function currentTripDay(){
-    var now = new Date();
-    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    if(today < TRIP_START || today > TRIP_END) return 1;
-    var diffDays = Math.round((today - TRIP_START) / 86400000);
-    return diffDays + 1;
-  }
+  // day boundaries: each day runs until the next one starts
+  var STARTS = {
+    1:'2026-10-08T00:00:00-04:00', 2:'2026-10-09T05:00:00+01:00', 3:'2026-10-10T00:00:00+01:00',
+    4:'2026-10-11T00:00:00+01:00', 5:'2026-10-12T00:00:00+01:00', 6:'2026-10-13T00:00:00+01:00',
+    7:'2026-10-14T00:00:00+01:00', 8:'2026-10-15T00:00:00+01:00', 9:'2026-10-16T00:00:00+01:00',
+    10:'2026-10-17T00:00:00+01:00', 11:'2026-10-18T00:00:00+01:00'
+  };
 
-  function scrollToItinerary(){
-    var target = document.getElementById('day' + currentTripDay());
-    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-  function scrollToMap(){
-    mapSection.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-  btnItin.addEventListener('click', scrollToItinerary);
-  btnMap.addEventListener('click', scrollToMap);
-
-  var dayMeta = [
-    {day:1, label:"Day 1 · Depart"},
-    {day:2, label:"Day 2 · London"},
-    {day:3, label:"Day 3 · London"},
-    {day:4, label:"Day 4 · Eagles/Jaguars"},
-    {day:5, label:"Day 5 · Arrival, Dublin"},
-    {day:6, label:"Day 6 · Guinness"},
-    {day:7, label:"Day 7 · Dublin"},
-    {day:8, label:"Day 8 · Causeway"},
-    {day:9, label:"Day 9 · Titanic Belfast"},
-    {day:10, label:"Day 10 · Home"}
+  // k: booked | plan | idea | open.   tbd: time unknown, tracked at the day level.
+  var days = [
+   {n:1,date:'2026-10-08',dow:'Thu',md:'Oct 8',off:EDT,city:'Travel',title:'Wheels up',where:'Philadelphia → Boston → London',hero:'heathrow',route:'none',items:[
+     {k:'booked',t:'AA1874 · Philadelphia to Boston',n:'Short hop to Boston. The schedules I found land late at night, so double-check this connects to AA108.',tbd:true,lab:'Check your booking'},
+     {k:'booked',t:'AA108 · Boston to London Heathrow',n:'Overnight flight. Usually leaves around 7–8 PM ET and lands 7:00–7:50 AM Friday at Terminal 3. Confirm in the American app.',tbd:true,lab:'Evening departure'}
+   ]},
+   {n:2,date:'2026-10-09',dow:'Fri',md:'Oct 9',city:'London',title:'Land and wander',where:'Heathrow → Hyde & Seek, Bayswater',hero:'littleVenice',route:'foot',items:[
+     {k:'booked',t:'Land at Heathrow',n:'Terminal 3, roughly 7:00–7:50 AM. Immigration can take the better part of an hour.',a:'07:30',b:'09:00',lab:'~7:30 AM',loc:'heathrow',ph:'heathrow',noroute:true},
+     {k:'plan',t:'Train to Hyde & Seek',n:'Elizabeth line to Paddington is about 30 min (Heathrow Express is about 15 and pricier), then a short walk to Lancaster Gate. Ask about early check-in or a bag drop.',a:'09:30',b:'10:45',loc:'hydeSeek',ph:'hydeSeek'},
+     {k:'idea',t:'Portobello Rd Distillery',n:'A working gin distillery and bar on Portobello Road, about a 10–15 min walk. Gin tasting and cocktails. Easy first-day stop.',a:'13:00',b:'14:30',loc:'portobello',ph:'portobello'},
+     {k:'idea',t:'Little Venice canal walk',n:'Narrowboats and a flat towpath. Quiet and pretty, good for jet lag.',a:'15:00',b:'16:00',loc:'littleVenice',ph:'littleVenice'},
+     {k:'idea',t:'Early pub dinner near the hotel',n:'Keep it easy tonight. If you want the fish and chips, The Golden Hind in Marylebone is the locals’ pick.',a:'18:00',b:'19:30'}
+   ]},
+   {n:3,date:'2026-10-10',dow:'Sat',md:'Oct 10',city:'London',title:'Markets, pubs and the river',where:'Borough Market → Tower Bridge',hero:'towerBridge',route:'foot',items:[
+     {k:'idea',t:'Borough Market',n:'Go before the lunch crowd and eat your way around. Open 9 AM to 5 PM on Saturdays.',a:'10:30',b:'12:30',loc:'borough',ph:'borough'},
+     {k:'idea',t:'The George Inn',n:'A 1600s coaching inn with wooden galleries around a courtyard. A short walk from the market.',a:'12:30',b:'14:00',loc:'george',ph:'george'},
+     {k:'idea',t:'Walk Tower Bridge and the river path',n:'Crossing on foot is free. Good views of the Tower and the skyline.',a:'14:30',b:'16:00',loc:'towerBridge',ph:'towerBridge'},
+     {k:'idea',t:'Cocktails with a view',n:'Low-effort options: H10 Waterloo Sky Bar or The Culpeper (rooftop garden pub, out east). Check walk-in policy first.',a:'17:00',b:'18:30'},
+     {k:'idea',t:'Pub dinner',n:'Somewhere easy on the way back. Keep tonight early, game tomorrow.',a:'19:00',b:'21:00'}
+   ]},
+   {n:4,date:'2026-10-11',dow:'Sun',md:'Oct 11',city:'London',title:'Eagles at Tottenham',where:'Hyde & Seek → Tottenham Hotspur Stadium',hero:'spurs',route:'none',items:[
+     {k:'idea',t:'Sunday roast, Notting Hill',n:'The Ladbroke Arms or The Elgin, both a short walk from Portobello Road. A proper roast before the game.',a:'10:45',b:'12:15'},
+     {k:'plan',t:'Head to Tottenham',n:'Pubs near the stadium fill early. Check the stadium’s entry time before you leave.',a:'12:30',b:'14:00',loc:'spurs',ph:'spurs'},
+     {k:'booked',t:'Eagles game',n:'2:30 PM kickoff at Tottenham Hotspur Stadium.',a:'14:30',b:'17:45',lab:'2:30 PM kickoff',loc:'spurs',ph:'spurs'},
+     {k:'plan',t:'Easy dinner and pack',n:'Early start tomorrow: leave the hotel around 8:45 AM for the Dublin flight.',a:'19:30',b:'21:00'}
+   ]},
+   {n:5,date:'2026-10-12',dow:'Mon',md:'Oct 12',city:'Dublin',title:'Into Ireland',where:'Heathrow → The Morrison, Dublin',hero:'odonoghues',route:'foot',items:[
+     {k:'plan',t:'Leave Hyde & Seek for Heathrow',n:'Elizabeth line from Paddington to Terminal 2, about 30 min. Aim to be at the airport about 2 hours early.',a:'08:45',b:'10:00',lab:'8:45 AM'},
+     {k:'booked',t:'EI159 · Heathrow to Dublin',n:'Aer Lingus, Terminal 2 to Terminal 2. Usually departs around noon and lands about 12:50–1:30 PM. Same time zone. Confirm in the Aer Lingus app.',a:'12:00',b:'13:30',lab:'~12:00 PM',loc:'heathrow',noroute:true},
+     {k:'booked',t:'Check in at The Morrison',n:'Walk to the Ha’penny Bridge afterward and along the Liffey to shake off the travel.',a:'14:30',b:'16:00',loc:'morrison',ph:'morrison'},
+     {k:'plan',t:'Fish Shop, Stoneybatter',n:'Small, no reservations. Some of the best fish and chips in the city.',a:'18:30',b:'20:00',loc:'fishShop',ph:'fishShop'},
+     {k:'plan',t:"O'Donoghue's session",n:'The pub where The Dubliners started. Real trad sessions most nights.',a:'21:00',b:'23:30',loc:'odonoghues',ph:'odonoghues'}
+   ]},
+   {n:6,date:'2026-10-13',dow:'Tue',md:'Oct 13',city:'Dublin',title:'Guinness and a haunted walk',where:'Guinness Storehouse → Dame Street → Smithfield',hero:'guinness',route:'foot',items:[
+     {k:'plan',t:'Phoenix Park',n:'Wild deer herd and the Wellington Monument. Free, and a short hop from the Storehouse.',a:'09:00',b:'10:30',loc:'phoenix',ph:'phoenix'},
+     {k:'booked',t:'Guinness Storehouse',n:'Finish at the Gravity Bar for the pint and the view.',a:'11:30',b:'13:30',lab:'11:30 AM',loc:'guinness',ph:'guinness'},
+     {k:'open',t:'Open afternoon',n:'Nothing booked. Ideas we floated: Croke Park Skyline Tour, Teeling Distillery, Kilmainham Gaol (book ahead).',a:'13:30',b:'17:00'},
+     {k:'booked',t:'Haunted Dark Dublin walking tour',n:'Torture, Murder & Mystery. Meet at Barnardo Square, Dame Street. Check your booking for the length.',a:'17:30',b:'19:00',lab:'5:30 PM',loc:'barnardo'},
+     {k:'open',t:'Dinner after the tour',n:'Open. The Vintage Kitchen moved to Friday.',a:'19:15',b:'20:45'},
+     {k:'plan',t:'The Cobblestone session',n:'Free, no table reservations, and it fills up. Get there early for a spot near the musicians.',a:'21:00',b:'23:30',loc:'cobblestone',ph:'cobblestone'}
+   ]},
+   {n:7,date:'2026-10-14',dow:'Wed',md:'Oct 14',city:'Dublin',title:'An easy Dublin day',where:'Grand Canal Dock → EPIC → Jameson',hero:'grandCanal',route:'foot',items:[
+     {k:'plan',t:'Grand Canal Dock',n:'Sleep in, then walk the canal. Quiet, modern, hardly any tourists.',a:'10:00',b:'11:00',loc:'grandCanal',ph:'grandCanal'},
+     {k:'plan',t:'EPIC · The Irish Emigration Museum',n:'Interactive and consistently well reviewed.',a:'11:00',b:'13:00',loc:'epic',ph:'epic'},
+     {k:'plan',t:'Jameson Distillery Bow St',n:'A whiskey tasting at the original distillery site.',a:'14:30',b:'16:00',loc:'jameson',ph:'jameson'},
+     {k:'open',t:'Open evening',n:'Catch a gig at Whelan’s or revisit a favorite.',a:'19:00',b:'22:30'}
+   ]},
+   {n:8,date:'2026-10-15',dow:'Thu',md:'Oct 15',city:'Northern Ireland',title:'North to the Causeway',where:'Dublin → Giant’s Causeway → Belfast',hero:'causeway',route:'drive',callout:{lab:'Crossing the border',text:'No checkpoint, but carry passports. Northern Ireland uses pounds sterling. Tell the rental company you are crossing; some charge a cross-border fee.'},items:[
+     {k:'plan',t:'Pick up the car and go',n:'Rental booking isn’t in my notes. Confirm the pickup spot and the cross-border policy.',a:'08:00',b:'08:30',loc:'morrison',ph:'morrison'},
+     {k:'plan',t:'Drive to the Causeway',n:'About 2 hrs to Belfast, then roughly 1–1.25 hrs along the Causeway Coastal Route.',a:'08:30',b:'11:45'},
+     {k:'plan',t:"Giant's Causeway",n:'The basalt columns and the cliff path above them. Photos first, then walk.',a:'11:45',b:'14:15',loc:'causeway',ph:'causeway'},
+     {k:'plan',t:'Drive to Belfast and check in',n:'About an hour back. Add your Belfast hotel here once it’s booked.',a:'14:15',b:'16:30',loc:'cathedralQ',ph:'cathedralQ'},
+     {k:'plan',t:'Dinner in the Cathedral Quarter',n:'Easy walk from most hotels.',a:'18:30',b:'20:00'},
+     {k:'plan',t:"Madden's session",n:'Trad most nights. Sessions are often upstairs, where it’s easier to hear. Backup: The Second Fiddle (Thu–Sun).',a:'20:30',b:'23:30',loc:'maddens',ph:'maddens'}
+   ]},
+   {n:9,date:'2026-10-16',dow:'Fri',md:'Oct 16',city:'Belfast',title:'Titanic, then home to Dublin',where:'Titanic Belfast → Dublin',hero:'titanic',route:'drive',callout:{lab:'Why this is the anchor day',text:'Titanic was designed, built and launched at the Harland & Wolff yard here, and the museum sits on the slipways. The SS Nomadic, the last White Star Line vessel, is close by; check whether your ticket includes it. Book a timed entry.'},items:[
+     {k:'plan',t:'Breakfast and check out',n:'Keep it easy.',a:'08:00',b:'09:30'},
+     {k:'plan',t:'Titanic Belfast',n:'Budget 2.5 to 3 hours.',a:'10:00',b:'12:30',loc:'titanic',ph:'titanic'},
+     {k:'plan',t:'Drive back to Dublin',n:'About 2 hrs. Return the car before dinner.',a:'13:00',b:'15:30',loc:'morrison',ph:'morrison'},
+     {k:'booked',t:'Dinner at The Vintage Kitchen',n:'Reserved for 6 PM.',a:'18:00',b:'20:00',lab:'6:00 PM',loc:'vintage',ph:'vintage'},
+     {k:'idea',t:'One last pint',n:'The Brazen Head, or back to O’Donoghue’s.',a:'20:30',b:'22:30'}
+   ]},
+   {n:10,date:'2026-10-17',dow:'Sat',md:'Oct 17',city:'Heading home',title:'Fly home to Philly',where:'Dublin Airport → Philadelphia',hero:'dublinAirport',route:'drive',items:[
+     {k:'plan',t:'Easy breakfast',n:'Pack up and keep the morning calm.',a:'08:00',b:'09:30'},
+     {k:'plan',t:'To Dublin Airport, Terminal 2',n:'U.S. preclearance happens in Dublin, so plan to be there about 3 hours early.',a:'10:30',b:'11:15',loc:'dublinAirport',ph:'dublinAirport'},
+     {k:'booked',t:'AA723 · Dublin to Philadelphia',n:'Usually leaves around 1:45 PM and lands about 4:00 PM. Confirm in the American app.',a:'13:45',b:'21:00',lab:'~1:45 PM'}
+   ]}
   ];
 
-  // "day" is normalized to the integer day number each stop is actually visited on,
-  // in visit order — stops revisited on a later day (airport, hotel) get their own entry.
-  // London stops (days 1-4) have no "photo" — no hotel booked yet and no verified photo URLs,
-  // so those markers/cards render without a thumbnail rather than a fabricated image link.
-  var stops = [
-    {name:"Philadelphia Airport", day:1, lat:39.8719, lng:-75.2411, color:"#6E85A6", note:"Depart PHL, 8:15 PM, AA1874 to Boston, connecting to AA108 overnight to London."},
-    {name:"Heathrow Airport", day:2, lat:51.4700, lng:-0.4543, color:"#6E85A6", note:"AA108 lands ~7:50 AM, off the overnight flight."},
-    {name:"London hotel (TBD)", day:2, lat:51.5117, lng:-0.1246, color:"#6E85A6", note:"Check in — swap in the real hotel once it's booked."},
-    {name:"Borough Market", day:2, lat:51.5055, lng:-0.0910, color:"#6E85A6", note:"Historic food market by London Bridge, no reservations needed."},
-    {name:"Tower Bridge", day:2, lat:51.5055, lng:-0.0754, color:"#6E85A6", note:"Evening walk along the Thames past Tower Bridge and City Hall."},
-    {name:"British Museum", day:3, lat:51.5194, lng:-0.1270, color:"#6E85A6", note:"Free entry — the Rosetta Stone and the Parthenon sculptures."},
-    {name:"Covent Garden", day:3, lat:51.5117, lng:-0.1246, color:"#6E85A6", note:"Lunch, shopping, and street performers in the piazza."},
-    {name:"Westminster", day:3, lat:51.5007, lng:-0.1246, color:"#6E85A6", note:"Parliament, Westminster Abbey, and the view back across the bridge."},
-    {name:"Soho", day:3, lat:51.5137, lng:-0.1337, color:"#6E85A6", note:"Dinner, then an early night — game day tomorrow."},
-    {name:"London hotel (TBD)", day:4, lat:51.5117, lng:-0.1246, color:"#6E85A6", note:"Slow start, then the Underground north to Tottenham."},
-    {name:"Tottenham Hotspur Stadium", day:4, lat:51.6043, lng:-0.0665, color:"#6E85A6", note:"Eagles vs. Jaguars, NFL London Games — kickoff 2:30 PM local (9:30 AM ET)."},
-    {name:"Dublin Airport", day:5, lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Short hop over from London.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Dublin_Airport_Terminal_1_-_2024-05-18_01.jpg"},
-    {name:"The Alex Hotel", day:5, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Check in, then a walk over the Ha'penny Bridge."},
-    {name:"Fish Shop, Stoneybatter", day:5, lat:53.3472611, lng:-6.2819629, color:"#C9A24B", note:"Dinner, no reservations.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjB78qiyjHfl3YfoMS_ajkXRE6oQavWYj6N4WJRLp69s_qATSSScDKZpkefCItfMCme5PXoSHX7SyJnIgwPQ9Dxsdn6tKRJPY7ELwAOc9U5DycQVnNtljzahRxdlCpSA9DFh0tFahuIQkUG2bQ=s300"},
-    {name:"O'Donoghue's Bar", day:5, lat:53.3382083, lng:-6.2542292, color:"#C9A24B", note:"Where The Dubliners got their start.", photo:"https://lh3.googleusercontent.com/place-photos/AG9NLjDjhxwUEO-IED_PqpJEwT0J7T5j1E--wBXOlrCwVw137jk8QfcF5EA-iPipoM50y4GZowtIHJpvU6_Vea2ljWlcc9jn0IpiDXSQAH5TnWZJ6JrWdxfKXcr5NpXGQISTmTEny5llNMoAhShDR9GP3rakKA=s300"},
-    {name:"Phoenix Park", day:6, lat:53.3558823, lng:-6.3298133, color:"#C9A24B", note:"Wild deer herd, Wellington Monument.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Phoenix_Park_Dublin_16.JPG"},
-    {name:"Guinness Storehouse", day:6, lat:53.3418088, lng:-6.2867156, color:"#C9A24B", note:"Booked, 11 AM.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Guinness_Storehouse.JPG"},
-    {name:"Marsh's Library", day:6, lat:53.3390768, lng:-6.2705909, color:"#C9A24B", note:"Ireland's oldest public library, 1707.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Marsh's_Library_-_panoramio.jpg"},
-    {name:"Kilmainham Gaol", day:6, lat:53.3418701, lng:-6.3098048, color:"#C9A24B", note:"Book ahead — sells out.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Entrance_to_Kilmainham.jpg"},
-    {name:"Iveagh Gardens", day:6, lat:53.3351376, lng:-6.2610343, color:"#C9A24B", note:"Dublin's secret walled garden.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/The_Iveagh_Gardens_-_Streets_Of_Dublin.jpg"},
-    {name:"Grand Canal Dock", day:7, lat:53.34418, lng:-6.2408446, color:"#C9A24B", note:"Quiet, modern, almost no tourists.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Buildings_at_Grand_Canal_Dock,_Dublin_20150809_1.jpg"},
-    {name:"EPIC Emigration Museum", day:7, lat:53.3483124, lng:-6.2481792, color:"#C9A24B", note:"Interactive, rarely crowded.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Entrance_to_EPIC_The_Irish_Emigration_Museum.jpg"},
-    {name:"Jameson Distillery Bow St", day:7, lat:53.3481851, lng:-6.2770289, color:"#C9A24B", note:"Whiskey tasting at the original site.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Dublin_-_Old_Jameson_Distillery_-_20210918161608.jpg"},
-    {name:"The Alex Hotel", day:8, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Depart Dublin for Belfast, ~2 hrs via the M1."},
-    {name:"Cathedral Quarter", day:8, lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Check into the hotel before continuing north.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Cathedral_St._Anne_Belfast.jpg"},
-    {name:"Giant's Causeway", day:8, lat:55.2408073, lng:-6.5115554, color:"#7FA0A5", note:"A day trip north from Belfast — arrive early to beat the tour buses.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Giant's_Causeway_(14).JPG"},
-    {name:"Cathedral Quarter", day:8, lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Back to Belfast for dinner + live music. Overnight in the Cathedral Quarter.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Cathedral_St._Anne_Belfast.jpg"},
-    {name:"Cathedral Quarter", day:9, lat:54.6022751, lng:-5.9290968, color:"#A5623F", note:"Depart Belfast for the shipyard.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Cathedral_St._Anne_Belfast.jpg"},
-    {name:"Titanic Belfast", day:9, lat:54.6081106, lng:-5.9099511, color:"#A5623F", note:"Built on the actual shipyard slipways where the ship was laid down and launched. Budget 2.5–3 hours.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Titanic_Belfast_side_view.jpg"},
-    {name:"The Alex Hotel", day:9, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Straight back to Dublin, ~2 hrs via the M1."},
-    {name:"The Alex Hotel", day:10, lat:53.3401, lng:-6.2453, color:"#C9A24B", note:"Pack up quickly — early flight today."},
-    {name:"Dublin Airport", day:10, lat:53.425632, lng:-6.257375, color:"#C9A24B", note:"Flight home to Philadelphia, AA723, 9:30 AM — arrives ~11:50 AM.", photo:"https://commons.wikimedia.org/wiki/Special:FilePath/Dublin_Airport_Terminal_1_-_2024-05-18_01.jpg"}
-  ];
+  // ---------- helpers ----------
+  function d(date, hm, off){ return new Date(date+'T'+hm+':00'+off); }
+  function px(url,w){ if(!url) return ''; return url.indexOf('/place-photos/')>-1 ? url.replace(/=s\d+$/,'=s'+w) : url; }
+  function fmt12(hm){ var p=hm.split(':'), h=+p[0], m=p[1]; var ap=h>=12?'PM':'AM'; h=h%12||12; return h+':'+m+' '+ap; }
+  function lab(it){ return it.lab || fmt12(it.a); }
+  function rel(ms){
+    var m=Math.max(1,Math.round(ms/60000));
+    if(m<60) return m+' min';
+    var h=Math.floor(m/60);
+    if(h<24) return h+' h'+(m%60?' '+(m%60)+' m':'');
+    var dd=Math.round(ms/86400000); return dd+(dd===1?' day':' days');
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var TAGTXT={booked:'Booked',plan:'Plan',idea:'Idea',open:'Open'};
 
-  // The major inter-city legs of the trip — flights (dashed) and drives (solid) —
-  // used by the "Overview" map state and for their click-for-duration popups.
-  var legs = [
-    {from:"Philadelphia", to:"Boston", mode:"flight", flight:"AA1874", duration:"~1h 30m", color:"#6E85A6", coords:[[39.8719,-75.2411],[42.3656,-71.0096]]},
-    {from:"Boston", to:"London", mode:"flight", flight:"AA108", duration:"~6h 45m", color:"#6E85A6", coords:[[42.3656,-71.0096],[51.4700,-0.4543]]},
-    {from:"London", to:"Dublin", mode:"flight", flight:null, duration:"~1h 20m", color:"#6E85A6", coords:[[51.4700,-0.4543],[53.425632,-6.257375]]},
-    {from:"Dublin", to:"Belfast", mode:"drive", flight:null, duration:"~2h", color:"#A5623F", coords:[[53.425632,-6.257375],[54.6022751,-5.9290968]]},
-    {from:"Belfast", to:"Giant's Causeway (round trip)", mode:"drive", flight:null, duration:"~2–2.5h round trip", color:"#7FA0A5", coords:[[54.6022751,-5.9290968],[55.2408073,-6.5115554],[54.6022751,-5.9290968]]},
-    {from:"Belfast", to:"Dublin", mode:"drive", flight:null, duration:"~2h", color:"#C9A24B", coords:[[54.6022751,-5.9290968],[53.425632,-6.257375]]},
-    {from:"Dublin", to:"Philadelphia", mode:"flight", flight:"AA723", duration:"~7h 20m", color:"#6E85A6", coords:[[53.425632,-6.257375],[39.8719,-75.2411]]}
-  ];
+  var params = new URLSearchParams(location.search);
+  var override = params.get('now') ? new Date(params.get('now')) : null;
+  function now(){ return override && !isNaN(override) ? override : new Date(); }
 
-  var hubs = [
-    {name:"Philadelphia", lat:39.8719, lng:-75.2411, color:"#6E85A6"},
-    {name:"Boston", lat:42.3656, lng:-71.0096, color:"#6E85A6"},
-    {name:"London", lat:51.4700, lng:-0.4543, color:"#6E85A6"},
-    {name:"Dublin", lat:53.425632, lng:-6.257375, color:"#C9A24B"},
-    {name:"Belfast", lat:54.6022751, lng:-5.9290968, color:"#A5623F"},
-    {name:"Giant's Causeway", lat:55.2408073, lng:-6.5115554, color:"#7FA0A5"}
-  ];
+  days.forEach(function(day){
+    day.start = new Date(STARTS[day.n]); day.end = new Date(STARTS[day.n+1]);
+    day.off = day.off || EU;
+    day.items.forEach(function(it){
+      if(!it.tbd){ it.s = d(day.date,it.a,day.off); it.e = d(day.date,it.b,day.off); }
+    });
+  });
 
-  var map, markersLayer, routeLayer, routeRequestId = 0;
-
-  function cssVar(name){
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  function itemStatus(it, day, t){
+    if(it.tbd){ if(t<day.start) return 'soon'; if(t<day.end) return 'today'; return 'done'; }
+    if(t<it.s) return 'soon'; if(t<=it.e) return 'live'; return 'done';
+  }
+  function compute(t){
+    var next=null;
+    days.forEach(function(day){
+      day.st = t>=day.end ? 'past' : (t>=day.start ? 'today' : 'future');
+      day.items.forEach(function(it){ it.st = itemStatus(it,day,t); it.isNext=false; });
+    });
+    outer: for(var i=0;i<days.length;i++){ for(var j=0;j<days[i].items.length;j++){ var it=days[i].items[j]; if(it.st==='soon'||it.st==='today'){ it.isNext=true; next=it; break outer; } } }
+    return next;
+  }
+  function chipFor(it){
+    if(it.st==='live') return ['live','Happening now'];
+    if(it.st==='done') return ['done','✓ Done'];
+    if(it.isNext) return ['next','Up next'];
+    if(it.st==='today') return ['today','Today'];
+    return ['soon','Coming up'];
   }
 
-  function dayRouteColor(day){
-    if(day >= 1 && day <= 4) return cssVar('--fog');
-    if(day === 8) return cssVar('--steel');
-    if(day === 9) return cssVar('--rust');
-    return cssVar('--gold');
-  }
+  // ---------- build DOM ----------
+  var blocksEl=document.getElementById('blocks'), itinEl=document.getElementById('itinerary');
+  var blockRefs=[], dayRefs=[];
 
-  function clearRoute(){
-    if(routeLayer){ map.removeLayer(routeLayer); routeLayer = null; }
-  }
-
-  function drawStraightLineFallback(latlngs, color){
-    clearRoute();
-    routeLayer = L.polyline(latlngs, {color:color, weight:3, opacity:0.7, dashArray:'6 8'}).addTo(map);
-    map.fitBounds(routeLayer.getBounds(), {padding:[40,40], maxZoom:14});
-  }
-
-  function fetchRoute(day, latlngs){
-    var color = dayRouteColor(day);
-    if(latlngs.length < 2) return;
-
-    var thisRequest = ++routeRequestId;
-    var coordsStr = latlngs.map(function(ll){ return ll[1] + ',' + ll[0]; }).join(';'); // OSRM wants lon,lat
-    var url = 'https://router.project-osrm.org/route/v1/driving/' + coordsStr + '?overview=full&geometries=geojson';
-
-    fetch(url).then(function(res){
-      if(!res.ok) throw new Error('OSRM request failed: ' + res.status);
-      return res.json();
-    }).then(function(data){
-      if(thisRequest !== routeRequestId) return; // a newer view was selected meanwhile
-      if(!data.routes || !data.routes.length) throw new Error('OSRM returned no route');
-      clearRoute();
-      routeLayer = L.geoJSON(data.routes[0].geometry, {
-        style: function(){ return {color:color, weight:3, opacity:0.75}; }
-      }).addTo(map);
-      map.fitBounds(routeLayer.getBounds(), {padding:[40,40], maxZoom:14});
-    }).catch(function(err){
-      if(thisRequest !== routeRequestId) return;
-      console.warn('OSRM routing unavailable, falling back to a straight line:', err);
-      drawStraightLineFallback(latlngs, color);
+  function buildBlocks(){
+    var html='';
+    days.forEach(function(day){
+      html += '<article class="block" id="block-'+day.n+'" data-n="'+day.n+'">'+
+        '<div class="b-photo">'+(PH[day.hero]?'<img alt="" loading="lazy" src="'+esc(px(PH[day.hero],1000))+'">':'')+'</div>'+
+        '<div class="b-top"><span class="pill">DAY '+day.n+'</span>'+
+          '<button class="datebtn" data-go="'+day.n+'" aria-label="Open day '+day.n+' in the itinerary">'+day.dow+' · '+day.md+'</button>'+
+          '<span class="chip" data-role="daychip"></span></div>'+
+        '<div class="b-main"><div class="city">'+esc(day.city)+'</div><h2>'+esc(day.title)+'</h2></div>'+
+        '<div><div class="b-next"><div class="lbl" data-role="lbl"></div><div class="what" data-role="what"></div><div class="when" data-role="when"></div></div>'+
+        '<button class="more" data-go="'+day.n+'">See more →</button></div>'+
+      '</article>';
+    });
+    blocksEl.innerHTML=html;
+    days.forEach(function(day){
+      var el=document.getElementById('block-'+day.n);
+      blockRefs.push({el:el,chip:el.querySelector('[data-role=daychip]'),lbl:el.querySelector('[data-role=lbl]'),what:el.querySelector('[data-role=what]'),when:el.querySelector('[data-role=when]')});
     });
   }
 
-  function buildDayTabs(){
-    var container = document.getElementById('map-day-tabs');
-
-    var overviewBtn = document.createElement('button');
-    overviewBtn.type = 'button';
-    overviewBtn.textContent = 'Overview';
-    overviewBtn.setAttribute('role','tab');
-    overviewBtn.dataset.key = 'overview';
-    overviewBtn.addEventListener('click', renderOverview);
-    container.appendChild(overviewBtn);
-
-    dayMeta.forEach(function(d){
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = d.label;
-      btn.setAttribute('role','tab');
-      btn.dataset.key = String(d.day);
-      btn.addEventListener('click', function(){ renderDay(d.day); });
-      container.appendChild(btn);
-    });
-  }
-
-  function setActiveTab(key){
-    var buttons = document.querySelectorAll('#map-day-tabs button');
-    buttons.forEach(function(b){
-      var active = b.dataset.key === String(key);
-      b.classList.toggle('active', active);
-      b.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-  }
-
-  // Every view switch bumps this so an in-flight OSRM fetch from the previous
-  // view can't resolve later and clobber whatever's now on the map.
-  function invalidatePendingRoute(){
-    routeRequestId++;
-  }
-
-  function renderOverview(){
-    setActiveTab('overview');
-    invalidatePendingRoute();
-
-    markersLayer.clearLayers();
-    clearRoute();
-
-    var allPoints = [];
-    var lines = legs.map(function(leg){
-      var line = L.polyline(leg.coords, {
-        color: leg.color,
-        weight: leg.mode === 'flight' ? 2.5 : 3,
-        opacity: 0.8,
-        dashArray: leg.mode === 'flight' ? '2 8' : null
+  function buildItinerary(){
+    var html='';
+    days.forEach(function(day){
+      html += '<section class="day" id="day-'+day.n+'"><div class="day-head"><span class="pill">DAY '+day.n+'</span><span class="day-date">'+day.dow+', '+day.md+'</span><span class="chip" data-role="daychip"></span></div>'+
+        '<h2 class="day-title">'+esc(day.title)+'</h2><p class="day-loc">'+esc(day.where)+'</p><div class="stops">';
+      day.items.forEach(function(it,idx){
+        it.id='item-'+day.n+'-'+idx;
+        html += '<div class="stop '+it.k+'" id="'+it.id+'">'+
+          (it.ph&&PH[it.ph]?'<img class="stop-photo" alt="" loading="lazy" src="'+esc(px(PH[it.ph],300))+'">':'')+
+          '<div class="stop-text"><div class="stop-meta"><span class="stop-time">'+esc(lab(it))+'</span><span class="chip" data-role="chip"></span><span class="tag '+it.k+'">'+TAGTXT[it.k]+'</span></div>'+
+          '<div class="stop-name">'+esc(it.t)+'</div><div class="stop-note">'+esc(it.n)+'</div></div></div>';
       });
-      var detail = leg.flight ? (leg.flight + ' · ' + leg.duration) : leg.duration;
-      line.bindPopup(
-        '<div class="popup-name">' + leg.from + ' → ' + leg.to + '</div>' +
-        '<div class="popup-note">' + detail + '</div>',
-        {closeButton:true, maxWidth:220}
-      );
-      leg.coords.forEach(function(c){ allPoints.push(c); });
-      return line;
+      html += '</div>';
+      if(day.callout) html += '<div class="callout"><p class="lab">'+esc(day.callout.lab)+'</p><p>'+esc(day.callout.text)+'</p></div>';
+      html += '</section>';
     });
-    routeLayer = L.layerGroup(lines).addTo(map);
-
-    hubs.forEach(function(h){
-      var icon = L.divIcon({
-        className: '',
-        html: '<div style="width:14px;height:14px;border-radius:50%;background:'+h.color+';border:2px solid #0E2620;box-shadow:0 0 0 1px rgba(242,236,220,0.3);"></div>',
-        iconSize:[14,14],
-        iconAnchor:[7,7]
-      });
-      var marker = L.marker([h.lat, h.lng], {icon:icon});
-      marker.bindPopup('<div class="popup-name">'+h.name+'</div>', {closeButton:true, maxWidth:200});
-      marker.addTo(markersLayer);
-      allPoints.push([h.lat, h.lng]);
+    itinEl.innerHTML=html;
+    days.forEach(function(day){
+      var sec=document.getElementById('day-'+day.n);
+      dayRefs.push({el:sec,chip:sec.querySelector('[data-role=daychip]')});
+      day.items.forEach(function(it){ var e=document.getElementById(it.id); it.el=e; it.chipEl=e.querySelector('[data-role=chip]'); });
     });
-
-    map.fitBounds(allPoints, {padding:[30,30]});
   }
 
-  function renderDay(day){
-    setActiveTab(day);
-    invalidatePendingRoute();
+  // remove images that fail to load (gradient fallback shows through)
+  document.addEventListener('error',function(e){ var t=e.target; if(t && t.tagName==='IMG'){ t.style.display='none'; } },true);
 
-    markersLayer.clearLayers();
-    clearRoute();
-
-    var dayStops = stops.filter(function(s){ return s.day === day; });
-    var latlngs = [];
-    dayStops.forEach(function(s){
-      var icon = L.divIcon({
-        className: '',
-        html: '<div style="width:14px;height:14px;border-radius:50%;background:'+s.color+';border:2px solid #0E2620;box-shadow:0 0 0 1px rgba(242,236,220,0.3);"></div>',
-        iconSize:[14,14],
-        iconAnchor:[7,7]
-      });
-      var marker = L.marker([s.lat, s.lng], {icon:icon});
-      var popupHtml = (s.photo ? '<img class="popup-photo" loading="lazy" src="'+s.photo+'" alt="">' : '') +
-        '<div class="popup-day">Day '+s.day+'</div>' +
-        '<div class="popup-name">'+s.name+'</div>' +
-        '<div class="popup-note">'+s.note+'</div>';
-      marker.bindPopup(popupHtml, {closeButton:true, maxWidth:220});
-      marker.addTo(markersLayer);
-      latlngs.push([s.lat, s.lng]);
-    });
-
-    if(latlngs.length){
-      map.fitBounds(latlngs, {padding:[40,40], maxZoom:14}); // interim fit while the route loads
+  // ---------- live update ----------
+  function dayChipText(day,t){
+    if(day.st==='past') return ['done','✓ Done'];
+    if(day.st==='today') return day.items.some(function(i){return i.st==='live';}) ? ['live','Happening now'] : ['today','Today'];
+    return ['soon','In '+rel(day.start-t)];
+  }
+  function upNext(day,t){
+    if(day.st==='past') return {lbl:'Completed',what:'All done here',when:''};
+    if(day.st==='today'){
+      var live=day.items.filter(function(i){return i.st==='live';});
+      var nx=day.items.filter(function(i){return i.st==='soon'||i.st==='today';})[0];
+      if(live.length){ var it=live[0]; return {lbl:'Happening now',what:it.t,when:'Started '+lab(it)+(nx?' · then '+nx.t:'')}; }
+      if(nx) return {lbl:'Up next',what:nx.t,when:(nx.tbd?'':'in '+rel(nx.s-t)+' · ')+lab(nx)};
+      return {lbl:'Done for today',what:'Nothing else on the list',when:''};
     }
-    fetchRoute(day, latlngs);
+    var f=day.items[0]; return {lbl:'First up',what:f.t,when:lab(f)};
+  }
+  function update(){
+    var t=now(); compute(t);
+    var cur=null; days.forEach(function(day){ if(day.st==='today') cur=day; });
+    var tl=document.getElementById('tripline');
+    if(t<days[0].start) tl.textContent='Trip starts in '+rel(days[0].start-t);
+    else if(!cur) tl.textContent='Trip complete. Welcome home.';
+    else tl.textContent='Day '+cur.n+' of '+days.length+' · '+cur.city;
+
+    days.forEach(function(day,i){
+      var b=blockRefs[i], un=upNext(day,t), dc=dayChipText(day,t);
+      b.el.className='block '+day.st;
+      b.chip.className='chip '+dc[0]; b.chip.textContent=dc[1];
+      b.lbl.textContent=un.lbl; b.what.textContent=un.what; b.when.textContent=un.when;
+      b.when.style.display=un.when?'':'none';
+      var r=dayRefs[i]; r.el.className='day '+day.st; r.chip.className='chip '+dc[0]; r.chip.textContent=dc[1];
+      day.items.forEach(function(it){
+        var c=chipFor(it);
+        it.el.className='stop '+it.k+' '+(it.st==='live'?'live':it.st==='done'?'done':'soon');
+        it.chipEl.className='chip '+c[0]; it.chipEl.textContent=c[1];
+      });
+    });
+    var pb=document.getElementById('previewbar');
+    if(override){ pb.textContent='Preview mode · pretending it is '+params.get('now'); pb.classList.remove('hidden'); } else pb.classList.add('hidden');
+    refreshMapChips();
   }
 
-  function initMap(){
-    map = L.map('leaflet-map', {scrollWheelZoom:false}).setView([46, -30], 3);
-    window.__leafletMap = map;
+  // ---------- navigation ----------
+  var view='blocks';
+  var views={blocks:document.getElementById('blocks-view'),itinerary:document.getElementById('itinerary-view'),map:document.getElementById('map-view')};
+  var tabs={blocks:document.getElementById('tab-blocks'),itinerary:document.getElementById('tab-itinerary'),map:document.getElementById('tab-map')};
+  var fab=document.getElementById('nowfab');
+  function setView(v){
+    view=v;
+    Object.keys(views).forEach(function(k){ views[k].classList.toggle('hidden',k!==v); tabs[k].classList.toggle('active',k===v); tabs[k].setAttribute('aria-selected',k===v?'true':'false'); });
+    fab.classList.toggle('hidden', v!=='itinerary');
+    if(v==='map') showMap(mapDay || defaultMapDay());
+  }
+  function nowTarget(){
+    var live=null, nx=null;
+    days.forEach(function(day){ day.items.forEach(function(it){ if(!live && it.st==='live') live=it; if(!nx && it.isNext) nx=it; }); });
+    return live||nx;
+  }
+  function scrollToEl(el, smooth, center){
+    var off = 84; // clears the sticky tab bar
+    function targetY(){
+      var y = el.getBoundingClientRect().top + window.pageYOffset - (center ? Math.max(off, (window.innerHeight - el.offsetHeight)/2) : off);
+      return Math.max(0,y);
+    }
+    function go(y, soft){
+      var root=document.documentElement;
+      if(soft){ window.scrollTo({top:y, behavior:'smooth'}); }
+      else { root.style.scrollBehavior='auto'; window.scrollTo(0,y); root.style.scrollBehavior=''; }
+    }
+    go(targetY(), smooth);
+    // fonts and photos can nudge the layout right after a jump, so re-check twice
+    [300,1000].forEach(function(ms){ setTimeout(function(){ var y2=targetY(); if(Math.abs(y2-window.pageYOffset)>12) go(y2,false); },ms); });
+  }
+  function goDay(n){
+    setView('itinerary');
+    var day=days[n-1], target=document.getElementById('day-'+n);
+    if(day.st==='today'){
+      var it=day.items.filter(function(i){return i.st==='live';})[0] || day.items.filter(function(i){return i.isNext;})[0];
+      if(it) target=it.el;
+    }
+    scrollToEl(target,false,false);
+  }
+  function jumpNow(){ var it=nowTarget(); if(it) scrollToEl(it.el,true,true); }
+  function curDay(){ var c=null; days.forEach(function(x){ if(x.st==='today') c=x; }); return c; }
+  tabs.blocks.addEventListener('click',function(){
+    setView('blocks'); var c=curDay(); scrollToEl(c?document.getElementById('block-'+c.n):blocksEl,false,false);
+  });
+  tabs.itinerary.addEventListener('click',function(){
+    setView('itinerary'); var it=curDay()?nowTarget():null; scrollToEl(it?it.el:document.getElementById('day-1'),false,false);
+  });
+  tabs.map.addEventListener('click',function(){ setView('map'); scrollToEl(mapChips,false,false); });
+  fab.addEventListener('click',jumpNow);
+  document.addEventListener('click',function(e){ var b=e.target.closest('[data-go]'); if(b) goDay(+b.getAttribute('data-go')); });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_3zk2_1_12353c6795dfabf0c8e9dd4e', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(map);
-
-    markersLayer = L.layerGroup().addTo(map);
-
-    buildDayTabs();
-    renderOverview();
+  // ---------- map ----------
+  var map=null, group=null, mapDay=null, token=0;
+  var CITYCOL={London:'#7FA0A5',Dublin:'#C9A24B','Northern Ireland':'#A5623F',Belfast:'#A5623F',Travel:'#CFC8B4','Heading home':'#C9A24B'};
+  var mapChips=document.getElementById('mapchips');
+  function defaultMapDay(){ var cur=null; days.forEach(function(x){ if(x.st==='today') cur=x; }); return cur?cur.n:2; }
+  function refreshMapChips(){
+    mapChips.innerHTML=''; days.forEach(function(day){
+      var b=document.createElement('button'); b.textContent='D'+day.n+' · '+day.md;
+      if(day.st==='past') b.classList.add('past'); if(mapDay===day.n) b.classList.add('active');
+      b.addEventListener('click',function(){ showMap(day.n); }); mapChips.appendChild(b);
+    });
+  }
+  function msg(t){ document.getElementById('leaflet-map').innerHTML='<div class="map-msg">'+esc(t)+'</div>'; }
+  function showMap(n){
+    mapDay=n; refreshMapChips();
+    var day=days[n-1];
+    document.getElementById('map-title').textContent='Day '+day.n+' · '+day.title;
+    var meta=document.getElementById('map-meta'); meta.textContent='';
+    var pts=[]; day.items.forEach(function(it){ if(it.loc){ var L0=LOC[it.loc]; if(!pts.length || pts[pts.length-1].key!==it.loc) pts.push({key:it.loc,it:it,loc:L0}); } });
+    var list=document.getElementById('map-list'); list.innerHTML='';
+    pts.forEach(function(p,i){ var li=document.createElement('li'); li.innerHTML='<span class="num">'+(i+1)+'</span><span><span class="tm">'+esc(lab(p.it))+'</span> &nbsp;'+esc(p.loc.n)+'</span>'; list.appendChild(li); });
+    if(typeof L==='undefined'){ msg('The map needs an internet connection to load.'); return; }
+    var host=document.getElementById('leaflet-map');
+    if(!map){ host.innerHTML=''; map=L.map('leaflet-map',{scrollWheelZoom:false}).setView([53.9,-6.5],7);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap contributors &copy; CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
+      group=L.layerGroup().addTo(map); }
+    setTimeout(function(){ map.invalidateSize(); },60);
+    group.clearLayers();
+    if(!pts.length){ meta.textContent='No mapped stops for this day.'; return; }
+    var col=CITYCOL[day.city]||'#C9A24B', bounds=[];
+    pts.forEach(function(p,i){
+      var icon=L.divIcon({className:'',html:'<div class="pin" style="background:'+col+'">'+(i+1)+'</div>',iconSize:[24,24],iconAnchor:[12,12]});
+      var m=L.marker([p.loc.lat,p.loc.lng],{icon:icon}).addTo(group);
+      m.bindPopup((p.it.ph&&PH[p.it.ph]?'<img class="pop-photo" src="'+esc(px(PH[p.it.ph],400))+'" alt="">':'')+'<div class="pop-time">'+esc(lab(p.it))+'</div><div class="pop-name">'+esc(p.loc.n)+'</div>',{maxWidth:220});
+      bounds.push([p.loc.lat,p.loc.lng]);
+    });
+    map.fitBounds(bounds,{padding:[36,36],maxZoom:15});
+    var rpts=[]; day.items.forEach(function(it){ if(it.loc && !it.noroute && (!rpts.length||rpts[rpts.length-1]!==it.loc)) rpts.push(it.loc); });
+    if(day.route==='none' || rpts.length<2) return;
+    var my=++token;
+    var coords=rpts.map(function(k){return LOC[k].lng+','+LOC[k].lat;}).join(';');
+    var base=day.route==='drive'?'https://router.project-osrm.org/route/v1/driving/':'https://routing.openstreetmap.de/routed-foot/route/v1/driving/';
+    function straight(){ if(my!==token) return; L.polyline(rpts.map(function(k){return [LOC[k].lat,LOC[k].lng];}),{color:col,weight:3,dashArray:'6 8'}).addTo(group); meta.textContent='Dashed line = straight line (route lookup unavailable).'; }
+    fetch(base+coords+'?overview=full&geometries=geojson').then(function(r){return r.json();}).then(function(j){
+      if(my!==token) return;
+      if(j.routes && j.routes[0]){
+        var rt=j.routes[0]; var g=L.geoJSON(rt.geometry,{style:{color:col,weight:4,opacity:.9}}).addTo(group); map.fitBounds(g.getBounds(),{padding:[36,36]});
+        var km=rt.distance/1000; meta.textContent = day.route==='drive' ? ('Driving about '+Math.round(km)+' km · '+rel(rt.duration*1000)) : ('Walking route · about '+km.toFixed(1)+' km total');
+      } else straight();
+    }).catch(straight);
   }
 
-  initMap();
+  // ---------- init ----------
+  buildBlocks(); buildItinerary(); update();
+  setInterval(update,30000);
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) update(); });
+  var v=params.get('view'); if(v&&views[v]) setView(v);
+  var cur=null; days.forEach(function(x){ if(x.st==='today') cur=x; });
+  if(cur && view==='blocks') setTimeout(function(){ var b=document.getElementById('block-'+cur.n); if(b) scrollToEl(b,false,false); },50);
+  window.__trip={days:days,update:update,setView:setView,showMap:showMap};
+})();
 </script>
-
 </body>
 </html>
