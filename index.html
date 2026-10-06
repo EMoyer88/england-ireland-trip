@@ -151,6 +151,20 @@
   .stop-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
   .linkbtn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid var(--gold-dim);border-radius:3px;color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.05em;text-decoration:none;}
   .linkbtn:hover{background:rgba(201,162,75,.12);text-decoration:none;}
+
+  .branch{margin-top:12px;max-width:600px;}
+  .bt{display:grid;grid-template-columns:1fr 1fr;gap:4px;border:1px solid var(--line);border-radius:3px;padding:3px;}
+  .bbtn{min-height:46px;background:transparent;border:none;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-dim);}
+  .bbtn.active{background:var(--gold);color:var(--ink);font-weight:500;}
+  .bpane{margin-top:12px;}
+  .bsum{font-size:15px;color:var(--cream);line-height:1.5;}
+  .btime{margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.04em;color:var(--gold);line-height:1.5;}
+  button.ideasbtn{background:transparent;cursor:pointer;}
+  .ideas{margin-top:10px;display:grid;gap:8px;}
+  .idea{padding:10px 12px;border:1px solid var(--line);border-radius:3px;background:rgba(242,236,220,.03);}
+  .idea-t{font-family:'Fraunces',serif;font-weight:500;font-size:16px;}
+  .idea-t a{color:var(--gold);text-decoration:none;}
+  .idea-n{font-size:14px;color:var(--cream-dim);line-height:1.45;margin-top:2px;}
   .callout{margin-top:22px;border:1px solid var(--line);border-radius:3px;padding:18px 20px;background:rgba(242,236,220,.03);}
   .callout .lab{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin:0 0 8px;}
   .callout p{margin:0;font-size:15px;line-height:1.6;color:var(--cream-dim);max-width:620px;}
@@ -281,6 +295,14 @@
   };
 
   // k: booked | plan | idea | open.   tbd: time unknown, tracked at the day level.
+  var STEPS_THERE = [
+    'Walk to Lancaster Gate station, a minute from the hotel. Central line.',
+    'Take the Central line eastbound 9 stops to Liverpool Street (about 20 min).',
+    'At Liverpool Street, follow the Overground signs to the Weaver line platforms. Take any train to Enfield Town or Cheshunt. Not Chingford.',
+    'Ride 10 stops to White Hart Lane (about 20 to 25 min). You pass Seven Sisters and Bruce Grove on the way.',
+    'Walk about 5 min to the stadium. Follow the crowd.'
+  ];
+
   var days = [
    {n:1,date:'2026-10-08',dow:'Thu',md:'Oct 8',off:EDT,city:'Travel',title:'Wheels up for London',where:'Philadelphia → Boston → London',hero:'heathrow',route:'none',items:[
      {k:'booked',t:'AA1874 · Philadelphia to Boston',n:'Lands in Boston around 9:45 PM. That leaves roughly 50 minutes to make AA108, so go straight to the gate. Both flights usually use Terminal B, but check.',a:'20:15',b:'21:45',lab:'8:15 PM'},
@@ -302,35 +324,41 @@
      {k:'idea',t:'Pub dinner',n:'Somewhere easy on the way back. Keep tonight early, game tomorrow.',a:'19:00',b:'21:00'}
    ]},
    {n:4,date:'2026-10-11',dow:'Sun',md:'Oct 11',city:'London',title:'Eagles vs. Jaguars',where:'Hyde & Seek → Tottenham Hotspur Stadium',hero:'spurs',route:'none',callout:{lab:'Why this day made the trip',text:'Week 5 of the NFL London Games. The Eagles are the road team in the Jaguars’ second home, their third regular-season game abroad and their first at Tottenham. Kickoff is 2:30 PM local, which is 9:30 AM ET, on NFL Network back home.'},items:[
-     {k:'idea',t:'Sunday roast, Notting Hill',n:'The Ladbroke Arms or The Elgin, both a short walk from Portobello Road. Book a table around 10:30 so you are out by 11:45.',a:'10:30',b:'11:45'},
-     {k:'plan',t:'Get to the stadium',n:'Leave the hotel by noon. About an hour door to door, so you arrive roughly 75 minutes before kickoff. Roads around the stadium are closed on gameday, so you will walk from the station. Journey times are my estimates, so check TfL Go before you leave.',a:'12:00',b:'13:15',lab:'12:00 PM',loc:'spurs',ph:'spurs',
-       how:[
-        {h:'Getting there (about 1 hr)',s:[
-          'Walk to Lancaster Gate station, a minute from the hotel. Central line.',
-          'Take the Central line eastbound 9 stops to Liverpool Street (about 20 min).',
-          'At Liverpool Street, follow the Overground signs to the Weaver line platforms. Take any train to Enfield Town or Cheshunt. Not Chingford.',
-          'Ride 10 stops to White Hart Lane (about 20 to 25 min). You pass Seven Sisters and Bruce Grove on the way.',
-          'Walk about 5 min to the stadium. Follow the crowd.'
-        ]},
-        {h:'If the Overground is a mess',s:[
-          'Central line to Oxford Circus (3 stops), then the Victoria line northbound to Tottenham Hale, then about a 25 min walk. The NFL says the Victoria line is especially busy on gamedays, so this is the backup.'
-        ]}
-       ],
-       links:[{t:'Directions in Google Maps',u:'https://www.google.com/maps/dir/?api=1&origin=Hyde+%26+Seek+London+Hyde+Park&origin_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&destination=Tottenham+Hotspur+Stadium&destination_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc&travelmode=transit'},{t:'Stadium on the map',u:'https://www.google.com/maps/search/?api=1&query=Tottenham+Hotspur+Stadium&query_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc'},{t:'White Hart Lane station',u:'https://www.google.com/maps/search/?api=1&query=White+Hart+Lane+station+London'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}]},
+     {k:'plan',t:'Sunday plan: pick one',n:'Two ways to do the morning, depending on how everyone feels after the trip. Tap the one that fits. Journey times are my estimates, so check TfL Go before you leave.',a:'09:45',b:'13:15',lab:'Pick one',loc:'spurs',ph:'spurs',
+       branches:[
+        {label:'Early start',summary:'Breakfast and a pint in Tottenham, then into the stadium. For anyone who wants to soak it up.',timing:'Leave the hotel ~9:45 · White Hart Lane ~10:45 · gates open ~12:00 (check)',
+         steps:['Leave Hyde & Seek by 9:45.'].concat(STEPS_THERE).concat(['Breakfast at Bite to Eat Cafe, about a 5 min walk south of the stadium. Open from 7 AM on Sundays.','Pint around 11:30 at the Antwerp Arms (opens 10 AM, 8 min walk) or the Redemption taproom.','Head into the stadium around noon. Check the official entry time.']),
+         links:[{t:'Directions to White Hart Lane',u:'https://www.google.com/maps/dir/?api=1&origin=Hyde+%26+Seek+London+Hyde+Park&origin_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&destination=White+Hart+Lane+station+London&travelmode=transit'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}],
+         ideas:[
+          {t:'Bite to Eat Cafe',n:'Classic cafe breakfast: full English, omelettes. Open 7 AM Sundays, about a 5 min walk south of the stadium.',u:'https://www.google.com/maps/search/?api=1&query=Bite+to+Eat+Cafe+698+High+Rd+Tottenham&query_place_id=ChIJf2unUp4edkgR9ZJafkWC0y0'},
+          {t:'The Antwerp Arms',n:'The oldest pub in N17, community-owned, pints under £6, Redemption ales. Opens 10 AM Sunday. About 8 min walk. Packed on gamedays.',u:'https://www.google.com/maps/search/?api=1&query=The+Antwerp+Arms+Tottenham&query_place_id=ChIJL_PbH6EedkgRxdrKsrusoFs'},
+          {t:'Redemption Brewery Taproom',n:'Local brewery by the stadium. A CAMRA listing says it opens at 11 AM for the NFL games, but check their socials.',u:'https://www.google.com/maps/search/?api=1&query=Redemption+Brewery+Taproom+Tottenham'},
+          {t:'The Bricklayers',n:'Very Spurs, 4 min walk, opens 11 AM. Mostly standing, burgers only. Expect it to be jammed.',u:'https://www.google.com/maps/search/?api=1&query=The+Bricklayers+803+High+Rd+Tottenham&query_place_id=ChIJ2QxA5pgedkgRJrree604sMY'}
+         ]},
+        {label:'Easy start',summary:'Sleep in, eat near the hotel, then head up. For anyone who needs the rest.',timing:'Leave the hotel ~12:00 · stadium ~1:00 · kickoff 2:30',
+         steps:['Sleep in. Eat near the hotel: hotel breakfast, or a Sunday roast in Notting Hill (book for about 10:30).','Leave Hyde & Seek by noon.'].concat(STEPS_THERE).concat(['Pubs near the stadium will be packed by 1:00. If the queues are huge, have your pint inside the stadium.']),
+         links:[{t:'Directions to the stadium',u:'https://www.google.com/maps/dir/?api=1&origin=Hyde+%26+Seek+London+Hyde+Park&origin_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&destination=Tottenham+Hotspur+Stadium&destination_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc&travelmode=transit'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}],
+         ideas:[
+          {t:'The Ladbroke Arms',n:'Notting Hill gastropub with a well-regarded Sunday roast. Book ahead.',u:'https://www.google.com/maps/search/?api=1&query=The+Ladbroke+Arms+Notting+Hill+London'},
+          {t:'The Elgin',n:'Low-key Notting Hill pub with a classic roast. Book ahead.',u:'https://www.google.com/maps/search/?api=1&query=The+Elgin+Ladbroke+Grove+London'},
+          {t:'The Antwerp Arms',n:'If you want a pub pint near the stadium, get there by 1:00. After that it is five deep at the bar.',u:'https://www.google.com/maps/search/?api=1&query=The+Antwerp+Arms+Tottenham&query_place_id=ChIJL_PbH6EedkgRxdrKsrusoFs'},
+          {t:'Inside the stadium',n:'The stadium has its own bars, so you can skip the pub queues and have a pint after you are through security.'}
+         ]}
+       ]},
      {k:'booked',t:'Eagles vs. Jaguars',n:'NFL London Games at Tottenham Hotspur Stadium. Get in early for the pregame atmosphere.',a:'14:30',b:'17:45',lab:'2:30 PM kickoff',loc:'spurs',ph:'spurs'},
-     {k:'plan',t:'Back to Hyde & Seek',n:'Everyone leaves at once, and White Hart Lane and the Victoria line get slammed. Either linger near the stadium for 45 minutes, or use Northumberland Park, which has more train capacity. Do not use Silver Street or Bruce Grove stations.',a:'17:45',b:'19:15',lab:'After the game',
+     {k:'plan',t:'Back to Hyde & Seek',n:'Everyone leaves at once, so expect a queue at White Hart Lane. Stewards control the station entrance after games and it is not the same door you came out of, so follow their directions. Do not use Silver Street or Bruce Grove stations.',a:'17:45',b:'19:15',lab:'After the game',
        how:[
-        {h:'Getting back (about 1 hr, plus queues)',s:[
-          'Walk about 10 min to Northumberland Park station (Greater Anglia). Station entrances change after games, so follow the stewards.',
-          'Take a train to London Liverpool Street (roughly 15 to 20 min). Fewer stops than the Overground.',
+        {h:'Getting back (about 1 hr, plus the queue)',s:[
+          'Walk about 5 min back to White Hart Lane station and follow the stewards.',
+          'Take any Weaver line train toward Liverpool Street (10 stops, about 20 to 25 min).',
           'At Liverpool Street, take the Central line westbound (Ealing Broadway or West Ruislip) 9 stops to Lancaster Gate (about 20 min).'
         ]},
-        {h:'Other options',s:[
-          'Walk 25 min to Tottenham Hale, Victoria line south to Oxford Circus, then the Central line 3 stops west to Lancaster Gate.',
+        {h:'If the White Hart Lane queue is huge',s:[
+          'Linger near the stadium for 45 minutes and let the crowd thin out, or walk about 10 min to Northumberland Park for a Greater Anglia train to Liverpool Street. Spurs say it has more capacity.',
           'Taxi or Uber: get picked up at least a 15 min walk from the stadium. Roads next to it are closed.'
         ]}
        ],
-       links:[{t:'Directions back in Google Maps',u:'https://www.google.com/maps/dir/?api=1&origin=Tottenham+Hotspur+Stadium&origin_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc&destination=Hyde+%26+Seek+London+Hyde+Park&destination_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&travelmode=transit'},{t:'Northumberland Park station',u:'https://www.google.com/maps/search/?api=1&query=Northumberland+Park+station+London'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}]},
+       links:[{t:'Directions back in Google Maps',u:'https://www.google.com/maps/dir/?api=1&origin=Tottenham+Hotspur+Stadium&origin_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc&destination=Hyde+%26+Seek+London+Hyde+Park&destination_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&travelmode=transit'},{t:'White Hart Lane station',u:'https://www.google.com/maps/search/?api=1&query=White+Hart+Lane+station+London'},{t:'Northumberland Park (backup)',u:'https://www.google.com/maps/search/?api=1&query=Northumberland+Park+station+London'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}]},
      {k:'plan',t:'Dinner and pack',n:'Keep it easy. Early start tomorrow: leave the hotel around 8:45 AM for the Dublin flight.',a:'19:30',b:'21:00'}
    ]},
    {n:5,date:'2026-10-12',dow:'Mon',md:'Oct 12',city:'Dublin',title:'Arrival, Dublin',where:'Heathrow → The Alex Hotel, Dublin',hero:'odonoghues',route:'foot',items:[
@@ -450,6 +478,21 @@
     });
   }
 
+  function branchHtml(it){
+    if(!it.branches) return '';
+    var saved=0; try{ saved=+(localStorage.getItem('sundayPlan')||0); }catch(_){}
+    if(!(saved>=0 && saved<it.branches.length)) saved=0;
+    var tabs=it.branches.map(function(b,i){ return '<button type="button" class="bbtn'+(i===saved?' active':'')+'" data-b="'+i+'" aria-pressed="'+(i===saved?'true':'false')+'">'+esc(b.label)+'</button>'; }).join('');
+    var panes=it.branches.map(function(b,i){
+      var ideas=(b.ideas||[]).map(function(x){ return '<div class="idea"><div class="idea-t">'+(x.u?'<a target="_blank" rel="noopener" href="'+esc(x.u)+'">'+esc(x.t)+' ↗</a>':esc(x.t))+'</div><div class="idea-n">'+esc(x.n)+'</div></div>'; }).join('');
+      return '<div class="bpane'+(i===saved?'':' hidden')+'"><div class="bsum">'+esc(b.summary)+'</div><div class="btime">'+esc(b.timing)+'</div>'+
+        '<div class="how"><div class="how-h">Steps</div><ol>'+b.steps.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ol></div>'+
+        '<div class="stop-links">'+(b.links||[]).map(function(l){ return '<a class="linkbtn" target="_blank" rel="noopener" href="'+esc(l.u)+'">'+esc(l.t)+' ↗</a>'; }).join('')+
+        '<button type="button" class="linkbtn ideasbtn" aria-expanded="false">Breakfast &amp; pint ideas</button></div>'+
+        '<div class="ideas hidden">'+ideas+'</div></div>';
+    }).join('');
+    return '<div class="branch"><div class="bt">'+tabs+'</div>'+panes+'</div>';
+  }
   function howHtml(it){
     if(!it.how) return '';
     return '<div class="how">'+it.how.map(function(g){ return '<div class="how-h">'+esc(g.h)+'</div><ol>'+g.s.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ol>'; }).join('')+'</div>';
@@ -469,7 +512,7 @@
         html += '<div class="stop '+it.k+'" id="'+it.id+'">'+
           (it.ph&&PH[it.ph]?'<img class="stop-photo" alt="" loading="lazy" src="'+esc(px(PH[it.ph],300))+'">':'')+
           '<div class="stop-text"><div class="stop-meta"><span class="stop-time">'+esc(lab(it))+'</span><span class="chip" data-role="chip"></span><span class="tag '+it.k+'">'+TAGTXT[it.k]+'</span></div>'+
-          '<div class="stop-name">'+esc(it.t)+'</div><div class="stop-note">'+esc(it.n)+'</div>'+howHtml(it)+linksHtml(it)+'</div></div>';
+          '<div class="stop-name">'+esc(it.t)+'</div><div class="stop-note">'+esc(it.n)+'</div>'+howHtml(it)+linksHtml(it)+branchHtml(it)+'</div></div>';
       });
       html += '</div>';
       if(day.callout) html += '<div class="callout"><p class="lab">'+esc(day.callout.lab)+'</p><p>'+esc(day.callout.text)+'</p></div>';
@@ -604,6 +647,16 @@
   tabs.map.addEventListener('click',function(){ setView('map'); scrollToEl(mapChips,false,false); });
   fab.addEventListener('click',jumpNow);
   document.addEventListener('click',function(e){
+    var bb=e.target.closest('.bbtn');
+    if(bb){
+      var box=bb.closest('.branch'), i=+bb.getAttribute('data-b');
+      box.querySelectorAll('.bbtn').forEach(function(x,j){ x.classList.toggle('active',j===i); x.setAttribute('aria-pressed',j===i?'true':'false'); });
+      box.querySelectorAll('.bpane').forEach(function(p,j){ p.classList.toggle('hidden',j!==i); });
+      try{ localStorage.setItem('sundayPlan',String(i)); }catch(_){}
+      return;
+    }
+    var ib=e.target.closest('.ideasbtn');
+    if(ib){ var list=ib.closest('.bpane').querySelector('.ideas'); var hid=list.classList.toggle('hidden'); ib.setAttribute('aria-expanded',hid?'false':'true'); return; }
     var b=e.target.closest('[data-go]'); if(b){ goDay(+b.getAttribute('data-go')); return; }
     var s=e.target.closest('[data-strip]'); if(s){ var n=+s.getAttribute('data-strip'); setView('blocks'); scrollToEl(document.getElementById('block-'+n),false,false); return; }
     if(e.target.closest('#nowcard') && nowItem){ goDay(nowItem.dn); }
