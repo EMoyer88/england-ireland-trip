@@ -301,6 +301,8 @@
     george:{n:'The George Inn',lat:51.5042925,lng:-0.0904364},
     towerBridge:{n:'Tower Bridge',lat:51.5054564,lng:-0.0753565},
     spurs:{n:'Tottenham Hotspur Stadium',lat:51.6042536,lng:-0.0662083},
+    morrison:{n:'The Morrison Dublin',lat:53.3466514,lng:-6.2659595},
+    oscars:{n:'Oscars Café Bar',lat:53.348889,lng:-6.2785828},
     alex:{n:'The Alex Hotel',lat:53.3418512,lng:-6.2490854},
     vcc:{n:'Vintage Cocktail Club',lat:53.3417289,lng:-6.2621407},
     wilde:{n:'WILDE Restaurant',lat:53.3414915,lng:-6.2610799},
@@ -308,7 +310,7 @@
     philly:{n:'Philadelphia',lat:39.8719,lng:-75.2411},
     boston:{n:'Boston',lat:42.3656,lng:-71.0096},
     dublinAirport:{n:'Dublin Airport',lat:53.425632,lng:-6.2573755},
-    fishShop:{n:'Fish Shop, Stoneybatter',lat:53.3472611,lng:-6.2819629},
+    fishShop:{n:'Fish Shop, Benburb St',lat:53.3472611,lng:-6.2819629},
     odonoghues:{n:"O'Donoghue's",lat:53.3382083,lng:-6.2542292},
     phoenix:{n:'Phoenix Park',lat:53.3558823,lng:-6.3298133},
     guinness:{n:'Guinness Storehouse',lat:53.3418088,lng:-6.2867156},
@@ -335,8 +337,8 @@
   // k: booked | plan | idea | open.   tbd: time unknown, tracked at the day level.
   var STEPS_THERE = [
     'Walk to Lancaster Gate station, a minute from the hotel. Central line.',
-    'Take the Central line eastbound 9 stops to Liverpool Street (about 20 min).',
-    'At Liverpool Street, follow the Overground signs to the Weaver line platforms. Take any train to Enfield Town or Cheshunt. Not Chingford.',
+    'Take the Central line eastbound 9 stops to Liverpool Street (about 20 min). The platform sign says Eastbound, and the train shows Epping, Hainault or Woodford. Every eastbound train stops at Liverpool Street.',
+    'At Liverpool Street, follow the Overground signs to the Weaver line platforms, and check the departure boards for Enfield Town or Cheshunt. Not Chingford. These leave from platforms 1 to 7, and the platform changes, so go by the board. One leaves about every 15 min, on the :00, :15, :30 and :45. Chingford trains leave at :03 and :18, so skip those.',
     'Ride 10 stops to White Hart Lane (about 20 to 25 min). You pass Seven Sisters and Bruce Grove on the way.',
     'Walk about 5 min to the stadium. Follow the crowd.'
   ];
@@ -399,11 +401,14 @@
        links:[{t:'Directions back in Google Maps',u:'https://www.google.com/maps/dir/?api=1&origin=Tottenham+Hotspur+Stadium&origin_place_id=ChIJw47Y1ZgedkgRv3lfDmrWLVc&destination=Hyde+%26+Seek+London+Hyde+Park&destination_place_id=ChIJ7-fcC1MFdkgREs-DFXwhmSM&travelmode=transit'},{t:'White Hart Lane station',u:'https://www.google.com/maps/search/?api=1&query=White+Hart+Lane+station+London'},{t:'Northumberland Park (backup)',u:'https://www.google.com/maps/search/?api=1&query=Northumberland+Park+station+London'},{t:'NFL gameday guide',u:'https://www.nfl.com/news/getting-to-tottenham-hotspur-stadium-on-gameday-2026'}]},
      {k:'plan',t:'Dinner and pack',n:'Keep it easy. Early start tomorrow: leave the hotel around 8:45 AM for the Dublin flight.',a:'19:30',b:'21:00'}
    ]},
-   {n:5,date:'2026-10-12',dow:'Mon',md:'Oct 12',city:'Dublin',title:'Arrival, Dublin',where:'Heathrow → The Alex Hotel, Dublin',hero:'odonoghues',route:'foot',items:[
+   {n:5,date:'2026-10-12',dow:'Mon',md:'Oct 12',city:'Dublin',title:'Arrival, Dublin',where:'Heathrow → The Morrison, Dublin',hero:'odonoghues',route:'foot',items:[
      {k:'plan',t:'Leave Hyde & Seek for Heathrow',n:'Elizabeth line from Paddington to Terminal 2, about 30 min. Aim to be at the airport about 2 hours early.',a:'08:45',b:'10:00',lab:'8:45 AM'},
      {k:'booked',t:'EI159 · London to Dublin',n:'Aer Lingus, Terminal 2. 12:00 PM to 1:30 PM. Short hop over, same time zone.',a:'12:00',b:'13:30',lab:'12:00 PM',loc:'heathrow',noroute:true},
-     {k:'booked',t:'Check in at The Alex Hotel',n:'Fenian Street. Then a loop over the Ha’penny Bridge and along the Liffey to shake off the travel.',a:'14:30',b:'16:00',loc:'alex',ph:'alex'},
-     {k:'plan',t:'Fish Shop, Stoneybatter',n:'Small, no reservations. Some of the best fish and chips in the city.',a:'18:30',b:'20:00',loc:'fishShop',ph:'fishShop'},
+     {k:'booked',t:'Check in at The Morrison',n:'On the quays next to the Ha’penny Bridge. Then a loop over the bridge and along the Liffey to shake off the travel.',a:'14:30',b:'16:00',loc:'morrison'},
+     {k:'idea',t:'Small bite and a drink, Smithfield',n:'Oscars Café Bar on Smithfield square: a gastropub and wine bar with starters and cocktails, open all day Monday. About 12 min on foot from the hotel and about 4 min from Fish Shop. Backups: Krewe on Capel Street for cocktails and small plates (opens 3 PM Monday), or a pint at Walsh’s on Stoneybatter, 3 min from Fish Shop. Skip The Glimmer Man and L. Mulligan Grocer tonight, both are closed Mondays.',a:'17:15',b:'18:20',loc:'oscars',
+       links:[{t:'Oscars Café Bar',u:'https://www.google.com/maps/search/?api=1&query=Oscars+Caf%C3%A9+Bar+Smithfield+Dublin&query_place_id=ChIJA5Wxky4MZ0gRyNOTgzDMhKk'},{t:'Krewe (backup)',u:'https://www.google.com/maps/search/?api=1&query=Krewe+Capel+Street+Dublin&query_place_id=ChIJM0gV49UPZ0gRfMO6CZE8s_g'},{t:'Walsh’s (pint only)',u:'https://www.google.com/maps/search/?api=1&query=Walsh%27s+Stoneybatter+Dublin&query_place_id=ChIJlUBi7C0MZ0gRBKaVy1vPoWk'}]},
+     {k:'plan',t:'Fish Shop, Benburb Street',n:'76 Benburb St, Smithfield. Plain front, tiny room, bar-stool seating. Reviewers say to book, so call +353 1 557 1473. Monday hours: 12:30 to 2:30 and 4:00 to 9:00 PM. Some of the best fish and chips in the city.',a:'18:30',b:'20:00',loc:'fishShop',ph:'fishShop',
+       links:[{t:'Open in Google Maps',u:'https://www.google.com/maps/search/?api=1&query=Fish+Shop+76+Benburb+St+Dublin&query_place_id=ChIJ_b6FLS4MZ0gR_e29dnCtEbg'},{t:'Walking directions',u:'https://www.google.com/maps/dir/?api=1&destination=Fish+Shop+76+Benburb+St+Dublin&destination_place_id=ChIJ_b6FLS4MZ0gR_e29dnCtEbg&travelmode=walking'},{t:'Call to book',u:'tel:+35315571473'}]},
      {k:'idea',t:'Temple Bar',n:'Loud, touristy, and worth a look once. Live music spilling out of every doorway.',a:'20:15',b:'21:15',loc:'templeBar',ph:'templeBar'},
      {k:'plan',t:"O'Donoghue's session",n:'The pub where The Dubliners started. Real trad sessions most nights.',a:'21:30',b:'23:30',loc:'odonoghues',ph:'odonoghues'}
    ]},
@@ -423,17 +428,33 @@
      {k:'plan',t:'Vintage Cocktail Club',n:'After-dinner drinks. Tucked inside the Powerscourt Townhouse, easy to miss, so look for the door.',a:'20:30',b:'22:30',loc:'vcc',ph:'vcc'}
    ]},
    {n:8,date:'2026-10-15',dow:'Thu',md:'Oct 15',city:'Northern Ireland',title:'Belfast, then the Causeway coast',where:'Dublin → Belfast → Giant’s Causeway → Belfast',hero:'causeway',route:'drive',callout:{lab:'Crossing the border',text:'No checkpoint, but carry passports. Northern Ireland uses pounds sterling. Tell the rental company you are crossing; some charge a cross-border fee.'},items:[
-     {k:'plan',t:'Pick up the car, depart Dublin',n:'Mostly motorway to Belfast, about 2 hrs via the M1. The rental booking isn’t in my notes: confirm the pickup spot and the cross-border policy.',a:'08:00',b:'08:45',loc:'alex',ph:'alex'},
-     {k:'plan',t:'Drop bags, Cathedral Quarter',n:'Drop bags at the hotel before continuing north, no need to unpack yet. Add your Belfast hotel here once it’s booked.',a:'10:00',b:'10:45',loc:'cathedralQ',ph:'cathedralQ'},
-     {k:'plan',t:"Giant's Causeway",n:'About 1–1.25 hrs north of Belfast. The basalt columns and the cliff path above them, one of the best natural sights in either country. Arrive before the tour buses if you can.',a:'12:00',b:'14:15',loc:'causeway',ph:'causeway'},
-     {k:'plan',t:'Drive back to Belfast',n:'About 1–1.25 hrs along the coast.',a:'14:15',b:'15:30',loc:'cathedralQ'},
+     {k:'plan',t:'Taxi to Dublin Airport',n:'Leave The Morrison by about 7:00 for the Avis desk in the Arrivals Hall. Allow 25 to 40 minutes. Pickup is at 8:00 AM.',a:'07:00',b:'07:55',lab:'7:00 AM',loc:'morrison',noroute:true,
+       links:[{t:'Route: hotel to airport',u:'https://www.google.com/maps/dir/?api=1&origin=The+Morrison+Dublin&origin_place_id=ChIJ1ZIUQIMOZ0gROwv_wx9rVdw&destination=Dublin+Airport&destination_place_id=ChIJLxmTab4RZ0gRVfMlt7UbElU&travelmode=driving'}]},
+     {k:'booked',t:'Pick up the Avis car',n:'Audi A6 automatic or similar, unlimited km. Dublin Airport, Arrivals Hall. The desk is open 5:00 AM to 1:30 AM.',a:'08:00',b:'08:45',lab:'8:00 AM',loc:'dublinAirport',ph:'dublinAirport',
+       how:[
+        {h:'At the desk',s:[
+          'Reservation number 28118918US2. It is prepaid ($277.75).',
+          'Bring your U.S. driver license, passport, and the card you booked with.',
+          'Tell them you are driving into Northern Ireland, and ask that it is allowed and whether any fee applies.',
+          'Ask exactly what the prepaid protection ($98.86) covers: collision, theft, tires, glass, roof.',
+          'Walk around the car and photograph every scratch before you leave. Check the fuel level and that it is an automatic.',
+          'Head for the M1 north toward Belfast, about 1 hr 45 min to the Cathedral Quarter.'
+        ]}
+       ],
+       links:[{t:'Call Avis Dublin Airport',u:'tel:+35316057500'}]},
+     {k:'plan',t:'Drop bags, Cathedral Quarter',n:'Drop bags at the hotel before continuing north, no need to unpack yet. Add your Belfast hotel here once it’s booked.',a:'10:30',b:'11:15',loc:'cathedralQ',ph:'cathedralQ'},
+     {k:'plan',t:"Giant's Causeway",n:'About 1–1.25 hrs north of Belfast. The basalt columns and the cliff path above them, one of the best natural sights in either country. Arrive before the tour buses if you can.',a:'12:15',b:'14:30',loc:'causeway',ph:'causeway'},
+     {k:'plan',t:'Drive back to Belfast',n:'About 1–1.25 hrs along the coast.',a:'14:30',b:'15:45',loc:'cathedralQ'},
      {k:'plan',t:'Dinner in the Cathedral Quarter',n:'Easy walk from most hotels.',a:'18:30',b:'20:00'},
      {k:'plan',t:"Madden's session",n:'Trad most nights. Sessions are often upstairs, where it’s easier to hear. Backups: The Second Fiddle (Thu–Sun), The Duke of York, The Dirty Onion.',a:'20:30',b:'23:30',loc:'maddens',ph:'maddens',noroute:true}
    ]},
    {n:9,date:'2026-10-16',dow:'Fri',md:'Oct 16',city:'Belfast',title:'The Titanic, then home to Dublin',where:'Belfast → Titanic Belfast → Dublin',hero:'titanic',route:'drive',callout:{lab:'Why this is the day the trip is built around',text:'Titanic was designed, built and launched at the Harland & Wolff yard here, and the museum sits on the actual slipways. Opens 8:50 AM. One visitor says the SS Nomadic, the last White Star Line vessel, is included in the ticket; check when you book.'},items:[
      {k:'plan',t:'Depart Belfast',n:'Quick breakfast, then straight to the shipyard.',a:'08:30',b:'09:00',loc:'cathedralQ',ph:'cathedralQ'},
      {k:'plan',t:'Titanic Belfast',n:'Opens 8:50 AM. Budget 2.5 to 3 hours. Book a timed entry.',a:'09:00',b:'11:45',lab:'~9:00 AM',loc:'titanic',ph:'titanic'},
-     {k:'plan',t:'Straight back to Dublin',n:'About 2 hrs via the M1, no detours. Return the car before dinner.',a:'12:30',b:'15:00',loc:'alex',ph:'alex'},
+     {k:'booked',t:'Drive to Dublin Airport and return the Avis car',n:'Due back by 4:30 PM at the Arrivals Hall. About 2 hrs from Belfast on the M1, no detours. Fill the tank near the airport first and check Avis’s fuel policy. Take photos of the car and the fuel gauge when you drop it.',a:'12:30',b:'15:15',lab:'12:30 PM',loc:'dublinAirport',ph:'dublinAirport',
+       links:[{t:'Directions to Dublin Airport',u:'https://www.google.com/maps/dir/?api=1&origin=Belfast+Titanic&destination=Dublin+Airport&destination_place_id=ChIJLxmTab4RZ0gRVfMlt7UbElU&travelmode=driving'},{t:'Call Avis Dublin Airport',u:'tel:+35316057500'}]},
+     {k:'plan',t:'Taxi to The Alex and check in',n:'Fenian Street, about 25 to 40 minutes from the airport. Time to freshen up before the 6 PM dinner.',a:'15:15',b:'16:30',loc:'alex',noroute:true,
+       links:[{t:'Route: airport to hotel',u:'https://www.google.com/maps/dir/?api=1&origin=Dublin+Airport&origin_place_id=ChIJLxmTab4RZ0gRVfMlt7UbElU&destination=The+Alex+Hotel+Dublin&destination_place_id=ChIJk3HWIpEOZ0gRWo1hVs9HRG4&travelmode=driving'}]},
      {k:'booked',t:'Dinner at The Vintage Kitchen',n:'Reserved for 6 PM.',a:'18:00',b:'20:00',lab:'6:00 PM',loc:'vintage',ph:'vintage'},
      {k:'idea',t:'One last pint',n:'Keep it short. Early start tomorrow.',a:'20:30',b:'21:30'}
    ]},
