@@ -189,6 +189,12 @@
   .pc-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
   .pc-btns button.linkbtn{background:transparent;cursor:pointer;}
   .me-dot{width:18px;height:18px;border-radius:50%;background:#F2ECDC;border:3px solid #0E2620;box-shadow:0 0 0 3px rgba(242,236,220,.45);}
+  .nightbtn{min-height:44px;padding:0 14px;background:transparent;border:1px solid var(--line);border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--cream-dim);}
+  .nightbtn.active{background:#1B2B4A;border-color:#8FA8D8;color:#DDE6F7;}
+  .night-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:-4px 0 6px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--cream-dim);align-items:center;}
+  .night-legend .nsw{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle;opacity:.85;}
+  .night-note{font-size:12.5px;color:var(--cream-dim);line-height:1.45;margin:0 0 12px;opacity:.85;}
+  .nz-tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;}
   .nmark{width:16px;height:16px;border-radius:50%;border:2px solid #0E2620;box-shadow:0 0 0 1px rgba(242,236,220,.4);}
 
   .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
@@ -271,11 +277,16 @@
     <div class="near-head">
       <div class="chiprow" id="near-cities" role="group" aria-label="City"></div>
       <div class="chiprow" id="near-cats" role="group" aria-label="Type"></div>
+      <div class="chiprow" id="near-night-row"><button id="near-night" class="nightbtn hidden" type="button" aria-pressed="false">☾ Night walk overlay</button></div>
       <button id="near-locate" class="locbtn" type="button">Use my location</button>
       <div id="near-status" aria-live="polite"></div>
     </div>
     <div id="near-map"></div>
     <div class="near-legend"><span><i class="ldot pubdot"></i>Pubs</span><span><i class="ldot sightdot"></i>Must-sees</span><span><i class="ldot medot"></i>You</span></div>
+    <div id="night-legend" class="hidden">
+      <div class="night-legend"><span><i class="nsw" style="background:#3FAE5A"></i>Fine at night</span><span><i class="nsw" style="background:#E3B341"></i>Stay alert</span><span><i class="nsw" style="background:#D9483B"></i>Taxi instead</span></div>
+      <p class="night-note">A rough guide for walking after dark, drawn from general traveller advice — not official data. Stick to busy, lit streets, and when in doubt, grab a taxi (FreeNow works in both cities). Tap a zone for details.</p>
+    </div>
     <div id="near-list"></div>
     <button id="near-more" class="linkbtn hidden" type="button">Show more</button>
   </div>
@@ -857,10 +868,58 @@
     belfast:{label:'Belfast',c:[54.599,-5.926],z:13}
   };
   var CITY_ORDER=['london','tottenham','dublin','belfast'];
-  var NEAR={city:'london',cat:'all',me:null,map:null,layer:null,meLayer:null,limit:12,asked:false,markers:{}};
+  // Night-walking guide: g = fine after dark, y = stay alert, r = taxi instead. Rough polygons, [lat,lng].
+  var NIGHT_ZONES = {
+    dublin:[
+      {lv:'g',n:'South city core',t:'Temple Bar, Dame St, Grafton St, Stephen’s Green, Merrion Sq. Busy and well lit late; Temple Bar gets rowdy but is heavily policed.',
+       p:[[53.3455,-6.2725],[53.3466,-6.2620],[53.3470,-6.2555],[53.3466,-6.2470],[53.3452,-6.2400],[53.3440,-6.2340],[53.3390,-6.2330],[53.3330,-6.2380],[53.3280,-6.2300],[53.3260,-6.2400],[53.3310,-6.2560],[53.3315,-6.2660],[53.3380,-6.2700],[53.3420,-6.2730]]},
+      {lv:'g',n:'IFSC & North Docks',t:'Office district along the north quays to the 3Arena and EPIC. Quiet late but wide, lit and patrolled.',
+       p:[[53.3478,-6.2510],[53.3500,-6.2490],[53.3497,-6.2290],[53.3475,-6.2280],[53.3471,-6.2480]]},
+      {lv:'y',n:'North quays & Smithfield',t:'Includes The Morrison. The quays themselves are fine; skip the Liffey Boardwalk and the side lanes late at night. Smithfield is lively near the pubs, emptier off the square.',
+       p:[[53.3455,-6.2900],[53.3461,-6.2620],[53.3478,-6.2600],[53.3492,-6.2625],[53.3502,-6.2700],[53.3500,-6.2810],[53.3480,-6.2900]]},
+      {lv:'y',n:'O’Connell St, Henry St & Talbot St',t:'Main drag, but known for antisocial behaviour after the shops close. Walk the middle of O’Connell St, keep phones away, don’t linger.',
+       p:[[53.3478,-6.2600],[53.3478,-6.2560],[53.3490,-6.2510],[53.3515,-6.2490],[53.3530,-6.2590],[53.3536,-6.2645],[53.3502,-6.2655],[53.3492,-6.2625]]},
+      {lv:'r',n:'North inner city',t:'Gardiner St, Summerhill, Sean McDermott St, Mountjoy Sq, Dorset St. Not a night walk — take a taxi through here.',
+       p:[[53.3515,-6.2490],[53.3530,-6.2440],[53.3580,-6.2440],[53.3610,-6.2560],[53.3600,-6.2660],[53.3545,-6.2650],[53.3536,-6.2645],[53.3530,-6.2590]]},
+      {lv:'y',n:'Connolly & Amiens St',t:'Station area is busy until the last trains, quieter and scruffier after. Fine to pass through, don’t wander.',
+       p:[[53.3500,-6.2490],[53.3530,-6.2440],[53.3560,-6.2300],[53.3497,-6.2290]]},
+      {lv:'y',n:'The Liberties & Guinness area',t:'Thomas St and James’s St are fine on the main road in the evening; side streets get very quiet. A taxi back from the Storehouse after dark is easy.',
+       p:[[53.3420,-6.2730],[53.3380,-6.2700],[53.3330,-6.2900],[53.3400,-6.2950],[53.3450,-6.2920],[53.3455,-6.2725]]},
+      {lv:'r',n:'Phoenix Park after dark',t:'Huge and unlit at night. Lovely by day; don’t cut through it after sunset.',
+       p:[[53.3500,-6.3020],[53.3620,-6.3050],[53.3700,-6.3300],[53.3640,-6.3600],[53.3540,-6.3500],[53.3490,-6.3200]]},
+      {lv:'r',line:true,n:'Liffey Boardwalk',t:'The riverside boardwalk between the Ha’penny Bridge and O’Connell Bridge. Use the road-level quay pavement instead after dark.',
+       p:[[53.3462,-6.2655],[53.3466,-6.2630],[53.3471,-6.2585]]}
+    ],
+    belfast:[
+      {lv:'g',n:'City centre & Cathedral Quarter',t:'City Hall, Victoria Square, Cathedral Quarter pubs (Duke of York, the Spaniard). Busy and well policed at night.',
+       p:[[54.6060,-5.9320],[54.6050,-5.9240],[54.6000,-5.9200],[54.5950,-5.9195],[54.5920,-5.9260],[54.5925,-5.9380],[54.5975,-5.9400],[54.6030,-5.9370]]},
+      {lv:'g',n:'Queen’s Quarter & Botanic',t:'University area, Botanic Ave and the Lisburn Rd. Student-busy and comfortable after dark.',
+       p:[[54.5925,-5.9380],[54.5920,-5.9260],[54.5860,-5.9230],[54.5790,-5.9280],[54.5760,-5.9420],[54.5850,-5.9430]]},
+      {lv:'g',n:'Titanic Quarter',t:'Safe and modern, but deserted after the attractions close. Easy to walk back along the river, or grab a taxi.',
+       p:[[54.6040,-5.9190],[54.6120,-5.9130],[54.6110,-5.9010],[54.6030,-5.9060],[54.5990,-5.9150]]},
+      {lv:'y',n:'Sailortown & York St',t:'Between the centre and the docks. Quiet, light foot traffic after dark — fine by car, so-so on foot.',
+       p:[[54.6060,-5.9320],[54.6085,-5.9300],[54.6110,-5.9200],[54.6050,-5.9240]]},
+      {lv:'y',n:'Short Strand & east bank',t:'Residential, interface area near the Lagan. Stick to the main bridges and the river path.',
+       p:[[54.5990,-5.9150],[54.6000,-5.9080],[54.5950,-5.9050],[54.5930,-5.9150]]},
+      {lv:'r',n:'West Belfast — Shankill, Falls & peace walls',t:'Great on a daytime black-taxi tour. After dark, don’t wander the interface streets on foot; tensions can flare around the walls.',
+       p:[[54.6030,-5.9400],[54.6100,-5.9450],[54.6130,-5.9620],[54.6010,-5.9700],[54.5900,-5.9700],[54.5950,-5.9450],[54.5975,-5.9400]]},
+      {lv:'r',n:'North Belfast interfaces',t:'New Lodge, Tiger’s Bay and around. Residential with interface flashpoints — not one to walk at night.',
+       p:[[54.6085,-5.9300],[54.6090,-5.9440],[54.6180,-5.9440],[54.6190,-5.9280]]}
+    ]
+  };
+  var NIGHT_STYLE={g:{c:'#3FAE5A',l:'Fine at night'},y:{c:'#E3B341',l:'Stay alert'},r:{c:'#D9483B',l:'Taxi instead'}};
+  function inPoly(pt,poly){ var x=pt[1],y=pt[0],ins=false;
+    for(var i=0,j=poly.length-1;i<poly.length;j=i++){ var xi=poly[i][1],yi=poly[i][0],xj=poly[j][1],yj=poly[j][0];
+      if(((yi>y)!==(yj>y)) && (x<(xj-xi)*(y-yi)/(yj-yi)+xi)) ins=!ins; }
+    return ins; }
+  function nightZoneAt(city,lat,lng){ var z=NIGHT_ZONES[city], hit=null, rank={r:3,y:2,g:1};
+    if(!z) return null; z.forEach(function(q){ if(!q.line && inPoly([lat,lng],q.p) && (!hit || rank[q.lv]>rank[hit.lv])) hit=q; }); return hit; }
+  function isNightNow(){ var h=new Date().getHours(); return h>=18 || h<7; }
+  var NEAR={city:'london',cat:'all',me:null,map:null,layer:null,meLayer:null,limit:12,asked:false,markers:{},night:isNightNow(),nightLayer:null};
   var nearCities=document.getElementById('near-cities'), nearCats=document.getElementById('near-cats'),
       nearStatus=document.getElementById('near-status'), nearList=document.getElementById('near-list'),
-      nearMore=document.getElementById('near-more'), nearLocate=document.getElementById('near-locate');
+      nearMore=document.getElementById('near-more'), nearLocate=document.getElementById('near-locate'),
+      nearNight=document.getElementById('near-night'), nightLegend=document.getElementById('night-legend');
 
   function hav(a,b){ var R=6371,p=Math.PI/180,dl=(b[0]-a[0])*p,dg=(b[1]-a[1])*p;
     var h=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*p)*Math.cos(b[0]*p)*Math.sin(dg/2)*Math.sin(dg/2);
@@ -895,15 +954,39 @@
     if(!NEAR.map){ document.getElementById('near-map').innerHTML='';
       NEAR.map=L.map('near-map',{scrollWheelZoom:false});
       addBasemap(NEAR.map);
-      NEAR.layer=L.layerGroup().addTo(NEAR.map); NEAR.meLayer=L.layerGroup().addTo(NEAR.map); }
+      NEAR.nightLayer=L.layerGroup().addTo(NEAR.map); NEAR.layer=L.layerGroup().addTo(NEAR.map); NEAR.meLayer=L.layerGroup().addTo(NEAR.map); }
     setTimeout(function(){ NEAR.map.invalidateSize(); },60);
     return true;
   }
+  function renderNight(){
+    var zones=NIGHT_ZONES[NEAR.city], on=!!(zones && NEAR.night);
+    nearNight.classList.toggle('hidden',!zones);
+    nearNight.classList.toggle('active',on); nearNight.setAttribute('aria-pressed',on?'true':'false');
+    nightLegend.classList.toggle('hidden',!on);
+    if(!NEAR.nightLayer) return;
+    NEAR.nightLayer.clearLayers();
+    if(!on) return;
+    zones.forEach(function(z){
+      var st=NIGHT_STYLE[z.lv];
+      var shape = z.line ? L.polyline(z.p,{color:st.c,weight:6,opacity:.9,dashArray:'4 6'})
+                         : L.polygon(z.p,{color:st.c,weight:1.5,opacity:.8,fillColor:st.c,fillOpacity:z.lv==='g'?.16:.22});
+      shape.bindPopup('<div class="nz-tag" style="color:'+st.c+'">'+st.l+'</div><div class="pop-name">'+esc(z.n)+'</div><div style="font-size:13px;color:#CFC8B4;margin-top:4px">'+esc(z.t)+'</div>',{maxWidth:250});
+      shape.addTo(NEAR.nightLayer);
+    });
+  }
+  function nightStatusSuffix(){
+    if(!NEAR.night || !NEAR.me || NEAR.far || !NIGHT_ZONES[NEAR.city]) return '';
+    var z=nightZoneAt(NEAR.city,NEAR.me.lat,NEAR.me.lng);
+    if(!z) return ' Night guide: you’re outside the mapped zones — stick to busy, lit streets.';
+    return ' Night guide: you’re in '+z.n+' ('+NIGHT_STYLE[z.lv].l.toLowerCase()+').';
+  }
+  nearNight.addEventListener('click',function(){ NEAR.night=!NEAR.night; renderNear(false,false); if(NEAR.me && !NEAR.far) setNearStatus('Located. Closest first in '+CITY_META[NEAR.city].label+'.'+nightStatusSuffix()); });
   function renderNear(refit,cityChanged){
     buildNearChips();
     var items=nearItems();
     // map
-    if(ensureNearMap()){
+    var hasMap=ensureNearMap(); renderNight();
+    if(hasMap){
       NEAR.layer.clearLayers(); NEAR.markers={};
       items.forEach(function(x){
         var col=x.k==='pub'?'#C9A24B':'#7FA0A5';
@@ -946,7 +1029,7 @@
     if(hav(me,CITY_META.tottenham.c)<3){ best='tottenham'; }
     else ['london','dublin','belfast'].forEach(function(c){ var d=hav(me,CITY_META[c].c); if(d<bd){bd=d;best=c;} });
     var dist=hav(me,CITY_META[best].c), lim=RAD[best]||3;
-    if(dist<lim){ NEAR.city=best; setNearStatus('Located. Closest first in '+CITY_META[best].label+'.'); }
+    if(dist<lim){ NEAR.city=best; setNearStatus('Located. Closest first in '+CITY_META[best].label+'.'+nightStatusSuffix()); }
     else { NEAR.far=true; setNearStatus('You are not near London, Tottenham, Dublin or Belfast right now. Pick a city above to browse the best-rated spots.'); }
   }
   function locate(){
